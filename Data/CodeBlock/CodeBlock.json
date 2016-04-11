@@ -1,0 +1,108 @@
+{
+	"views": [
+		{
+			"name":     "onload",
+			"endpoint": "https://ameijer-app.ccvdev.nl/CodeBlockEndpoint.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "",
+					"element_type": "text",
+					"value":        "Bacon Ipsum"
+				},
+				{
+					"name":         "type_bacon_text",
+					"label":        "Input veld",
+					"element_type": "input_text"
+				},
+				{
+					"name":         "type_bacon_textarea",
+					"label":        "TextArea veld",
+					"element_type": "input_textarea"
+				},
+				{
+					"name":         "format_select",
+					"label":        "Coole dingen?",
+					"element_type": "input_select",
+					"options":      [
+						{
+							"label": "Yes!",
+							"value": "1"
+						},
+						{
+							"label":    "Nope!",
+							"value":    "0",
+							"selected": true
+						}
+					]
+				},
+				{
+					"name":         "format_radio",
+					"label":        "Coole dingen?",
+					"element_type": "input_radio",
+					"options":      [
+						{
+							"label": "Yes!",
+							"value": "1"
+						},
+						{
+							"label":    "Nope!",
+							"value":    "0",
+							"selected": true
+						}
+					]
+				},
+				{
+					"name":         "format_checkout",
+					"label":        "Coole dingen?",
+					"element_type": "input_checkbox",
+					"value":        "1"
+				},
+				{
+					"name":         "invoice",
+					"label":        "Factur deeplink",
+					"element_type": "attachment",
+					"icon":         "file-pdf-o",
+					"deeplink":          "https:\/\/ameijer-app.ccvdev.nl\/invoice.pdf"
+				},
+				{
+					"name":         "invoice",
+					"label":        "Factur deeplink",
+					"element_type": "download",
+					"icon":         "file-pdf-o",
+					"deeplink":          "https:\/\/ameijer-app.ccvdev.nl\/invoice.pdf"
+				},
+				{
+					"name":         "submit",
+					"label":        "Verstuur",
+					"value":        "send",
+					"element_type": "input_button",
+					"icon":         "fa-share"
+				}
+			]
+		},
+		{
+			"name":     "succes",
+			"endpoint": "https://ameijer.ccvdev.nl/API/EndPoint/AppCodeBlockTest.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "",
+					"element_type": "text",
+					"value":        "Succesful post, Bacon Ipsum"
+				},
+				{
+					"name":         "placeholder_data",
+					"label":        "",
+					"element_type": "text"
+				},
+				{
+					"name":         "submit",
+					"label":        "Back",
+					"value":        "back",
+					"element_type": "input_button"
+				}
+			]
+		}
+	]
+}

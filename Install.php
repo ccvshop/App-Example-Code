@@ -16,7 +16,7 @@
 	/**
 	 * Some minor validation if the input is indeed a string.
 	 */
-	$_GET['api_public'] = is_string($_GET['api_public']) ? $_GET['api_public'] : null;
+	$_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
 
 	if(empty($_POST)) {
 		Log::WriteStartCall();

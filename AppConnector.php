@@ -35,7 +35,7 @@
 	 * @date    2014-10-13
 	 * @version 1.0    - First draft
 	 *          1.1    - Added logging
-	 *          1.2	   - Added construct check on config costants
+	 *          1.2       - Added construct check on config costants
 	 */
 	class AppConnector {
 		/**
@@ -43,19 +43,22 @@
 		 * You can find this as a property of the App in the Developer App Center
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 */
-		const AppSecretKey = null;
+		const AppSecretKey = '63vyl94ceu48yfdbqxjwi5dp39ko6mo2';
+		#const AppSecretKey = null;
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
-		 * Example: https://demo.biedmeer.nl/Handshake.php
+		 * Example: https://demo.ccvshop.nl/Handshake.php
 		 */
-		const AppHandshakeUri = null;
+		const AppHandshakeUri = 'https://ameijer-app.ccvdev.nl/Handshake.php';
+		#const AppHandshakeUri = null;
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
-		 * Example: https://demo.biedmeer.nl/UnInstall.php
+		 * Example: https://demo.ccvshop.nl/UnInstall.php
 		 */
-		const AppUninstallUri = null;
+		const AppUninstallUri = 'https://ameijer-app.ccvdev.nl/UnInstall.php';
+		#const AppUninstallUri = null;
 
 		/**
 		 * This is the field in the header of each request that contains the hash. Do NOT change this unless instructed by CCV.
@@ -73,18 +76,22 @@
 		const Hash_Field_Separator = '|';
 
 		/**
-		 * @var object Credential Contains the credentials. Used for example purposes only
+		 * @var Credential Credential Contains the credentials. Used for example purposes only
 		 */
-		private $Credential;
+		protected $Credential;
 
 		/**
 		 * @var array Contains the webhooks which need to be Posted to the web shop. Used for example purposes only.
 		 */
-		private $RequiredWebHooks = array(
-			array('event' => 'products.created', 'address' => 'https://development.bmdev.nl/void.php'),
-			array('event' => 'products.updated', 'address' => 'https://development.bmdev.nl/void.php'),
-			array('event' => 'products.deleted', 'address' => 'https://development.bmdev.nl/void.php'),
-		);
+		protected $RequiredWebHooks = [['event' => 'products.created', 'address' => 'https://development.bmdev.nl/void.php'],
+									   ['event' => 'products.updated', 'address' => 'https://development.bmdev.nl/void.php'],
+									   ['event' => 'products.deleted', 'address' => 'https://development.bmdev.nl/void.php'],
+		];
+
+		/**
+		 * @var null|int Contains the ID
+		 */
+		protected $RemoteAppId = null;
 
 		public function __construct() {
 			if(is_null($this::AppSecretKey)) {
@@ -133,6 +140,8 @@
 			#Creating WebHooks in the webshop
 			$this->Install_WebHooks();
 
+			$this->Install_CodeBlock();
+
 			#Marking the app as installed (MANDATORY).
 			$this->Install_App();
 		}
@@ -142,12 +151,13 @@
 		 *
 		 * @throws InvalidJsonException
 		 */
-		private function Install_WebHooks() {
+		protected function Install_WebHooks() {
 			$oWebRequest = new WebRequest();
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/webhooks');
+
 
 			foreach($this->RequiredWebHooks as $aWebHook) {
 				$oData          = new \stdClass();
@@ -165,6 +175,27 @@
 			}
 		}
 
+		protected function Install_CodeBlock() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+
+			#Marking app as 'installed'
+			$sData = file_get_contents('Data/CodeBlock/CodeBlock.json');
+			$oCodeBlock               = new \stdClass();
+			$oCodeBlock->placeholder = 'backend/orders/external_links';
+			$oCodeBlock->value = 'leet';
+			$oCodeBlock->dynamic_content = json_decode($sData);
+
+			$iAppId = $this->GetRemoteAppId();
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId.'/appcodeblocks');
+			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+		}
+
 		/**
 		 * Mandatory.
 		 * Calls the API and retrieves the App.Id associated with the api_public.
@@ -173,29 +204,18 @@
 		 * @throws InvalidApiResponse
 		 * @throws InvalidJsonException
 		 */
-		private function Install_App() {
+		protected function Install_App() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
-			$oWebRequest->SetApiResource('/api/rest/v1/apps');
-			$sOutput = $oWebRequest->Get();
-
-			$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
-
-			if(!isset($aCollectionOfApps->items)) {
-				throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
-			}
-
-			if(count($aCollectionOfApps->items) > 1) {
-				throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
-			}
-			$iAppId = $aCollectionOfApps->items[0]->id;
 
 			#Marking app as 'installed'
 			$oApp               = new \stdClass();
 			$oApp->is_installed = true;
+
+			$iAppId = $this->GetRemoteAppId();
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId);
 			$oWebRequest->SetData($oApp);
@@ -244,7 +264,7 @@
 		 *
 		 * @throws InvalidHashException
 		 */
-		private function ValidateHash($sUri) {
+		protected function ValidateHash($sUri) {
 			$aRequestHeaders = apache_request_headers();
 			Log::Write('ValidateHash', 'VALIDATE', $aRequestHeaders[self::Header_Hash]);
 			$aDataToHash[] = $sUri;
@@ -258,5 +278,31 @@
 				throw new InvalidHashException();
 			}
 			Log::Write('ValidateHash', 'VALIDATE OK', $aRequestHeaders[self::Header_Hash]);
+		}
+
+		protected function GetRemoteAppId() {
+			if(is_null($this->RemoteAppId)) {
+				$oWebRequest = new WebRequest();
+				#Getting Remote App resource
+				$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+				$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+				$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+				$oWebRequest->SetApiResource('/api/rest/v1/apps');
+				$sOutput = $oWebRequest->Get();
+
+				$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
+
+				if(!isset($aCollectionOfApps->items)) {
+					throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
+				}
+
+				if(count($aCollectionOfApps->items) > 1) {
+					throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
+				}
+
+				$this->RemoteAppId = $aCollectionOfApps->items[0]->id;
+			}
+
+			return $this->RemoteAppId;
 		}
 	}
