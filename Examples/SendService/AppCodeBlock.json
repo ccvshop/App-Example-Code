@@ -2,7 +2,7 @@
 	"views": [
 		{
 			"name":     "onload",
-			"endpoint": "https://ameijer-app.ccvdev.nl/CodeBlockEndpoint.php",
+			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
 			"elements": [
 				{
 					"name":         "description",
@@ -60,17 +60,22 @@
 				},
 				{
 					"name":         "invoice",
-					"label":        "Factur deeplink",
+					"label":        "Invoice deeplink",
 					"element_type": "attachment",
-					"icon":         "file-pdf-o",
-					"deeplink":          "https:\/\/ameijer-app.ccvdev.nl\/invoice.pdf"
+					"icon":         "fa-file-pdf-o"
 				},
 				{
-					"name":         "invoice",
-					"label":        "Factur deeplink",
+					"name":         "invoice-2",
+					"label":        "Invoice deeplink 2",
+					"element_type": "attachment",
+					"icon":         "fa-file-pdf-o"
+				},
+				{
+					"name":         "download",
+					"label":        "Download",
 					"element_type": "download",
-					"icon":         "file-pdf-o",
-					"deeplink":          "https:\/\/ameijer-app.ccvdev.nl\/invoice.pdf"
+					"icon":         "fa-file-pdf-o",
+					"value":        "https:\/\/ameijer-app.ccvdev.nl\/Examples/SendService/specimen_label.png"
 				},
 				{
 					"name":         "submit",
@@ -83,18 +88,18 @@
 		},
 		{
 			"name":     "succes",
-			"endpoint": "https://ameijer.ccvdev.nl/API/EndPoint/AppCodeBlockTest.php",
+			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
 			"elements": [
 				{
 					"name":         "description",
-					"label":        "",
-					"element_type": "text",
-					"value":        "Succesful post, Bacon Ipsum"
+					"label":        "Result",
+					"element_type": "text"
 				},
 				{
-					"name":         "placeholder_data",
-					"label":        "",
-					"element_type": "text"
+					"name":         "label-1",
+					"label":        "Package label",
+					"element_type": "attachment",
+					"icon":         "fa-file-pdf-o"
 				},
 				{
 					"name":         "submit",

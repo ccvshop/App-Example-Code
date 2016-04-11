@@ -140,7 +140,7 @@
 			#Creating WebHooks in the webshop
 			$this->Install_WebHooks();
 
-			$this->Install_CodeBlock();
+			$this->Install_SendService();
 
 			#Marking the app as installed (MANDATORY).
 			$this->Install_App();
@@ -158,7 +158,6 @@
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/webhooks');
 
-
 			foreach($this->RequiredWebHooks as $aWebHook) {
 				$oData          = new \stdClass();
 				$oData->event   = $aWebHook['event'];
@@ -175,23 +174,38 @@
 			}
 		}
 
-		protected function Install_CodeBlock() {
+		protected function Install_SendService() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 
-			#Marking app as 'installed'
-			$sData = file_get_contents('Data/CodeBlock/CodeBlock.json');
-			$oCodeBlock               = new \stdClass();
-			$oCodeBlock->placeholder = 'backend/orders/external_links';
-			$oCodeBlock->value = 'leet';
-			$oCodeBlock->dynamic_content = json_decode($sData);
+
 
 			$iAppId = $this->GetRemoteAppId();
 
-			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId.'/appcodeblocks');
+			#Delete all current app codeblocks already installed for this app. Making it a clean install.
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+			$sOutput = $oWebRequest->Get();
+			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
+
+			if(isset($aCollectionOfCodeBlocks->items)) {
+				foreach($aCollectionOfCodeBlocks->items as $oItem){
+					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+					$oWebRequest->Delete();
+				}
+			}
+
+			#Creating new codeblock for the send service.
+			$sData                       = file_get_contents('Examples/SendService/AppCodeBlock.json');
+			$oCodeBlock                  = new \stdClass();
+			$oCodeBlock->placeholder     = 'backend/orders/external_links';
+			$oCodeBlock->value           = 'leet';
+			$oCodeBlock->dynamic_content = json_decode($sData);
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);
 			$oWebRequest->Post();
 		}
