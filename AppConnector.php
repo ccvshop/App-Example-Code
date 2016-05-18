@@ -199,11 +199,10 @@
 			}
 
 			#Creating new codeblock for the send service.
-			$sData                       = file_get_contents('Examples/SendService/AppCodeBlock.json');
-			$oCodeBlock                  = new \stdClass();
-			$oCodeBlock->placeholder     = 'backend/orders/external_links';
-			$oCodeBlock->value           = 'leet';
-			$oCodeBlock->dynamic_content = json_decode($sData);
+			$sData                           = file_get_contents('Examples/SendService/AppCodeBlock.json');
+			$oCodeBlock                      = new \stdClass();
+			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
+			$oCodeBlock->interactive_content = json_decode($sData);
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);

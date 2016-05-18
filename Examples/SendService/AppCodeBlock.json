@@ -5,10 +5,16 @@
 			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
 			"elements": [
 				{
-					"name":         "description",
+					"name":         "intro_line1",
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "<img src=\"https://ameijer-app.ccvdev.nl/Examples/SendService/icon_thumb.png\">With Pigeon Postal Service you can create the package labels in advance, making it easy to print labels in advance."
+				},
+				{
+					"name":         "intro_line2",
 					"label":        "",
 					"element_type": "text",
-					"value":        "Bacon Ipsum"
+					"value":        "Choose the suitable options below to generate a label."
 				},
 				{
 					"name":         "insured_shipping",
@@ -21,7 +27,7 @@
 							"selected": true
 						},
 						{
-							"label": "Yes (+ &euro4,50)",
+							"label": "Yes (+ &euro; 4,50)",
 							"value": "1"
 						}
 					]
@@ -33,13 +39,13 @@
 				},
 				{
 					"name":         "direct_download",
-					"label":        "Download package label",
+					"label":        "Download package label directly",
 					"element_type": "input_checkbox",
 					"value":        "1"
 				},
 				{
 					"name":         "format_label",
-					"label":        "Format label",
+					"label":        "Label format",
 					"element_type": "input_radio",
 					"options":      [
 						{
@@ -47,13 +53,13 @@
 							"value": "A4"
 						},
 						{
-							"label":    "A5",
-							"value":    "A5",
-							"selected": true
+							"label": "A5",
+							"value": "A5"
 						},
 						{
-							"label": "A6",
-							"value": "A6"
+							"label":    "A6",
+							"value":    "A6",
+							"selected": true
 						}
 					]
 				},
@@ -72,13 +78,14 @@
 			"elements": [
 				{
 					"name":         "description",
-					"label":        "Result",
-					"element_type": "text"
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "Thank you for using Pigeon Postal Service. The label can be downloaded with the link below."
 				},
 				{
 					"name":         "package_label_1",
 					"label":        "Package label",
-					"element_type": "attachment",
+					"element_type": "deeplink",
 					"icon":         "fa-file-pdf-o"
 				}
 			]
@@ -89,19 +96,20 @@
 			"elements": [
 				{
 					"name":         "description",
-					"label":        "Result",
-					"element_type": "text"
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "Thank you for using Pigeon Postal Service. The label can be downloaded with the link below."
 				},
 				{
 					"name":         "package_label_1",
 					"label":        "Package label",
-					"element_type": "attachment",
+					"element_type": "deeplink",
 					"icon":         "fa-file-pdf-o"
 				},
 				{
-					"name":         "download_label_1",
+					"name":         "attachment_label_1",
 					"label":        "",
-					"element_type": "download"
+					"element_type": "attachment"
 				}
 			]
 		}
