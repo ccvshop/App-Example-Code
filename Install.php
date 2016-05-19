@@ -46,21 +46,7 @@
 			purposes.
 		</p>
 
-		</div>
-		<div class="panel panel-info">
-			<div class="panel-heading">
-				<h3 class="panel-title">
-					Debug Info
-				</h3>
-			</div>
-			<div class="panel-body">
 
-				<p>
-					api_public: <?= $_GET['api_public'] ?>
-				</p>
-
-			</div>
-		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
@@ -155,6 +141,21 @@
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>
 				</form>
+			</div>
+		</div>
+
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Debug Info
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>
+					api_public: <?= $_GET['api_public'] ?>
+				</p>
+
 			</div>
 		</div>
 		</body>
