@@ -15,6 +15,7 @@
 
 	/**
 	 * Some minor validation if the input is indeed a string.
+	 * It's advised to store this in a session for instances. For demo purposes we'll leave this in the request.
 	 */
 	$_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
 
@@ -26,25 +27,88 @@
 
 		?>
 		<html>
-			<head>
-				<title></title>
-			</head>
-			<body>
-				<h1>App Simulator - Installation</h1>
+		<head>
+			<title></title>
+		</head>
+		<body>
+		<h1>App Simulator - Installation</h1>
 
-				<form action="Install.php" method="post">
-					<label for="api_public">api_public</label>
-					<input type="text" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>" />
-					<br />
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337" />
-					<button name="Cancel">Cancel</button>
-					<button name="Install">Install</button>
-				</form>
-			</body>
+		<p>
+			This is a simulation tool for differnt kind of apps. All apps use the same installation principal, but the effect it will have in the webshop
+			differs. The purpose of this tool is to demo the options and possibilties you could use when developing an app.
+		</p>
+
+		<h2>Debug Info</h2>
+
+		<p>
+			api_public: <?= $_GET['api_public'] ?>
+		</p>
+
+		<h2>Bare installation</h2>
+
+		<p>This will only install the app. No futher API calls will be done. This is a good starting point if you have full understanding of the API</p>
+
+		<form action="Install.php" method="post">
+			<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+			<input type="hidden" name="install_type" id="install_type" value="bare"/>
+
+			<label for="customer_id">Customer Id</label>
+			<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+			<button name="Cancel">Cancel</button>
+			<button name="Install">Install</button>
+		</form>
+
+		<h2>Webhook installation</h2>
+
+		<p>This will install the app after creating a few webhooks in the webshop.</p>
+
+		<form action="Install.php" method="post">
+			<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+			<input type="hidden" name="install_type" id="install_type" value="webhooks"/>
+
+			<label for="customer_id">Customer Id</label>
+			<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+			<button name="Cancel">Cancel</button>
+			<button name="Install">Install</button>
+		</form>
+
+		<h2>Basic App Code block installation</h2>
+
+		<p>This will install the app after creating an App Code block in the frontend of the webshop. This could be used to place tracking pixels, chat
+		   services, etc. In this example a tracking pixel is added.</p>
+
+		<form action="Install.php" method="post">
+			<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+			<input type="hidden" name="install_type" id="install_type" value="tracking_pixel"/>
+
+			<label for="customer_id">Customer Id</label>
+			<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+			<button name="Cancel">Cancel</button>
+			<button name="Install">Install</button>
+		</form>
+
+		<h2>Interactive App Code block installation - Pigeon Postal Service</h2>
+
+		<p>This will install the app after creating an interactive App Code block. In this example a postal service is installed. In the order management on the tab 'Connections' the merchant can choose
+		   different options when creating a package label.</p>
+
+		<form action="Install.php" method="post">
+			<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+			<input type="hidden" name="install_type" id="install_type" value="postal_service"/>
+
+			<label for="customer_id">Customer Id</label>
+			<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+			<button name="Cancel">Cancel</button>
+			<button name="Install">Install</button>
+		</form>
+		</body>
 
 		</html>
-	<?
+		<?
 	} else {
 
 		try {

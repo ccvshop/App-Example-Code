@@ -81,14 +81,6 @@
 		protected $Credential;
 
 		/**
-		 * @var array Contains the webhooks which need to be Posted to the web shop. Used for example purposes only.
-		 */
-		protected $RequiredWebHooks = [['event' => 'products.created', 'address' => 'https://development.bmdev.nl/void.php'],
-									   ['event' => 'products.updated', 'address' => 'https://development.bmdev.nl/void.php'],
-									   ['event' => 'products.deleted', 'address' => 'https://development.bmdev.nl/void.php'],
-		];
-
-		/**
 		 * @var null|int Contains the ID
 		 */
 		protected $RemoteAppId = null;
@@ -137,17 +129,28 @@
 
 			Data_Credential::Update($this->Credential);
 
-			#Creating WebHooks in the webshop
-			$this->Install_WebHooks();
-
-			$this->Install_SendService();
+			switch($_REQUEST['install_type']) {
+				case 'webhooks':
+					$this->Install_WebHooks();
+					break;
+				case 'tracking_pixel':
+					$this->Install_TrackingPixel();
+					break;
+				case 'postal_service':
+					$this->Install_PostalService();
+					break;
+				case 'bare':
+					#Just install the app.
+				default:
+					break;
+			}
 
 			#Marking the app as installed (MANDATORY).
 			$this->Install_App();
 		}
 
 		/**
-		 * Creates the required webhooks in the webshop.
+		 * Creates the webhooks in the webshop.
 		 *
 		 * @throws InvalidJsonException
 		 */
@@ -158,11 +161,13 @@
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/webhooks');
 
-			foreach($this->RequiredWebHooks as $aWebHook) {
-				$oData          = new \stdClass();
-				$oData->event   = $aWebHook['event'];
-				$oData->address = $aWebHook['address'];
+			#These webhooks will be created in the webshop. When the event is triggered a payload will be posted to the address.
+			$aWebHooksToInstall   = [];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.created', 'address' => 'https://demo.ccvshop.nl/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.updated', 'address' => 'https://demo.ccvshop.nl/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.deleted', 'address' => 'https://demo.ccvshop.nl/void.php'];
 
+			foreach($aWebHooksToInstall as $oData) {
 				$oWebRequest->SetData($oData);
 				$sOutput = $oWebRequest->Post();
 
@@ -174,32 +179,74 @@
 			}
 		}
 
-		protected function Install_SendService() {
+		/**
+		 * Installing a app code block which places a tracking pixel in the footer on each frontend page.
+		 *
+		 * @throws \AppConnector\Exceptions\InvalidApiResponse
+		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 */
+		protected function Install_TrackingPixel() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 
+			$iAppId = $this->GetRemoteAppId();
 
+			#Delete all current app codeblocks already installed for this app. Making it a clean install.
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+			$sOutput                 = $oWebRequest->Get();
+			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
+
+			if(isset($aCollectionOfCodeBlocks->items)) {
+				foreach($aCollectionOfCodeBlocks->items as $oItem) {
+					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+					$oWebRequest->Delete();
+				}
+			}
+
+			#Creating new codeblock for the tracking pixel in the footer of each page.
+			$oCodeBlock              = new \stdClass();
+			$oCodeBlock->placeholder = 'footer';
+			$oCodeBlock->value       = '<img src="https://demo.ccvshop.nl/pixel.php" width="1" height="1" />';
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+		}
+
+		/**
+		 * Installs the Postal Service label creator. A merchant can create labels in his order management.
+		 *
+		 * @throws \AppConnector\Exceptions\InvalidApiResponse
+		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 */
+		protected function Install_PostalService() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 
 			$iAppId = $this->GetRemoteAppId();
 
 			#Delete all current app codeblocks already installed for this app. Making it a clean install.
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 
-			$sOutput = $oWebRequest->Get();
+			$sOutput                 = $oWebRequest->Get();
 			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
 
 			if(isset($aCollectionOfCodeBlocks->items)) {
-				foreach($aCollectionOfCodeBlocks->items as $oItem){
+				foreach($aCollectionOfCodeBlocks->items as $oItem) {
 					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
 					$oWebRequest->Delete();
 				}
 			}
 
 			#Creating new codeblock for the send service.
-			$sData                           = file_get_contents('Examples/SendService/AppCodeBlock.json');
+			$sData                           = file_get_contents('Examples/PostalService/AppCodeBlock.json');
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
 			$oCodeBlock->interactive_content = json_decode($sData);
