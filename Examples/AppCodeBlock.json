@@ -12,17 +12,17 @@
 				},
 				{
 					"name":         "type_bacon_text",
-					"label":        "Input veld",
+					"label":        "Input field",
 					"element_type": "input_text"
 				},
 				{
 					"name":         "type_bacon_textarea",
-					"label":        "TextArea veld",
+					"label":        "TextArea field",
 					"element_type": "input_textarea"
 				},
 				{
 					"name":         "format_select",
-					"label":        "Coole dingen?",
+					"label":        "Cool stuff?",
 					"element_type": "input_select",
 					"options":      [
 						{
@@ -54,7 +54,7 @@
 				},
 				{
 					"name":         "format_checkout",
-					"label":        "Coole dingen?",
+					"label":        "Cool stuff?",
 					"element_type": "input_checkbox",
 					"value":        "1"
 				},
@@ -79,7 +79,7 @@
 				},
 				{
 					"name":         "submit",
-					"label":        "Verstuur",
+					"label":        "Send",
 					"value":        "send",
 					"element_type": "input_button",
 					"icon":         "fa-share"

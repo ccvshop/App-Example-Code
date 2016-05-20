@@ -41,9 +41,8 @@
 		<h1>App Simulator - Installation</h1>
 
 		<p>
-			This is a simulation tool for differnt kind of apps. All apps use the same installation principal, but the effect it will have in the webshop
-			differs. The purpose of this tool is to demo the options and possibilties you could use when developing an app. The customer id is only for demo
-			purposes.
+			This is a simulation tool for different kinds of apps. All apps use the same installation principle, but the effect it will have in the webshop
+			differs. The purpose of this tool is to demo the options and possibilities you could use when developing an app. The customer id is for demo purposes only.
 		</p>
 
 
@@ -55,7 +54,7 @@
 			</div>
 			<div class="panel-body">
 
-				<p>This will only install the app. No futher API calls will be done. This is a good starting point if you have full understanding of the
+				<p>This will only install the app. No further API calls will be done. This is a good starting point if you have full understanding of the
 				   API</p>
 
 				<form action="Install.php" method="post">
@@ -103,8 +102,7 @@
 			<div class="panel-body">
 
 				<p>This will install the app after creating an App Code block in the frontend of the webshop. This could be used to place tracking
-				   pixels, chat
-				   services, etc. In this example a tracking pixel is added.</p>
+				   pixels, chat services, etc. In this example a tracking pixel is added.</p>
 
 				<form action="Install.php" method="post">
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
