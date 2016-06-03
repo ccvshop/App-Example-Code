@@ -19,10 +19,10 @@
 	$sFileName = urldecode($_GET['file']);
 
 	if($sFileName == 'specimen_label.png') {
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=\"" . $sFileName . "\";");
-		header("Content-Transfer-Encoding:  binary");
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="' . $sFileName . '";');
 		echo file_get_contents($sFileName);
+		die();
 	}
 
 	header('HTTP/1.1 404 File Not Found', true, 404);
