@@ -35,7 +35,8 @@
 	 * @date    2014-10-13
 	 * @version 1.0    - First draft
 	 *          1.1    - Added logging
-	 *          1.2       - Added construct check on config costants
+	 *          1.2    - Added construct check on config costants
+	 *          1.3	   - Added additional examples for interactive code blocks
 	 */
 	class AppConnector {
 		/**
@@ -43,21 +44,21 @@
 		 * You can find this as a property of the App in the Developer App Center
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 */
-		const AppSecretKey = '63vyl94ceu48yfdbqxjwi5dp39ko6mo2';
+		const AppSecretKey = '';
 		#const AppSecretKey = null;
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
-		 * Example: https://demo.ccvshop.nl/Handshake.php
+		 * Example: https://demo.securearea.eu/Handshake.php
 		 */
-		const AppHandshakeUri = 'https://ameijer-app.ccvdev.nl/Handshake.php';
+		const AppHandshakeUri = 'https://demo.securearea.eu/Handshake.php';
 		#const AppHandshakeUri = null;
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
-		 * Example: https://demo.ccvshop.nl/UnInstall.php
+		 * Example: https://demo.securearea.eu/UnInstall.php
 		 */
-		const AppUninstallUri = 'https://ameijer-app.ccvdev.nl/UnInstall.php';
+		const AppUninstallUri = 'https://demo.securearea.eu/UnInstall.php';
 		#const AppUninstallUri = null;
 
 		/**
@@ -163,9 +164,9 @@
 
 			#These webhooks will be created in the webshop. When the event is triggered a payload will be posted to the address.
 			$aWebHooksToInstall   = [];
-			$aWebHooksToInstall[] = (object) ['event' => 'products.created', 'address' => 'https://demo.ccvshop.nl/void.php'];
-			$aWebHooksToInstall[] = (object) ['event' => 'products.updated', 'address' => 'https://demo.ccvshop.nl/void.php'];
-			$aWebHooksToInstall[] = (object) ['event' => 'products.deleted', 'address' => 'https://demo.ccvshop.nl/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.created', 'address' => 'https://demo.securearea.eu/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.updated', 'address' => 'https://demo.securearea.eu/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.deleted', 'address' => 'https://demo.securearea.eu/void.php'];
 
 			foreach($aWebHooksToInstall as $oData) {
 				$oWebRequest->SetData($oData);
@@ -210,7 +211,7 @@
 			#Creating new codeblock for the tracking pixel in the footer of each page.
 			$oCodeBlock              = new \stdClass();
 			$oCodeBlock->placeholder = 'footer';
-			$oCodeBlock->value       = '<img src="https://demo.ccvshop.nl/pixel.php" width="1" height="1" />';
+			$oCodeBlock->value       = '<img src="https://demo.securearea.eu/pixel.php" width="1" height="1" />';
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);
