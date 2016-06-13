@@ -73,7 +73,7 @@
 			]
 		},
 		{
-			"name":     "succes",
+			"name":     "success",
 			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
 			"elements": [
 				{
@@ -91,7 +91,7 @@
 			]
 		},
 		{
-			"name":     "succes-direct-download",
+			"name":     "success-direct-download",
 			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
 			"elements": [
 				{
