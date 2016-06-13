@@ -44,6 +44,10 @@
 			$this->SetCreateDate($oObject->create_date);
 		}
 
+		/**
+		 * Convert this credential object to an array
+		 * @return array
+		 */
 		public function ToArray() {
 			return [
 				'api_public' => $this->ApiPublic,
@@ -55,8 +59,21 @@
 			];
 		}
 
+		/**
+		 * Convert this credential object to an std object
+		 * @return object
+		 */
 		public function ToStd() {
 			return (object)$this->ToArray();
+		}
+
+		/**
+		 * Print this credential as an array
+		 * @return string
+		 */
+		public function __toString()
+		{
+			return print_r($this->ToArray(), 1);
 		}
 
 		/**

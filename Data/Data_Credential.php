@@ -16,6 +16,8 @@
 	 * @version 1.0    - First draft
 	 *          1.1    - Added logging
 	 * 			1.2	   - Nick Postma: Added database credential storage
+	 * @TODO Nick Postma: Implementation of strategy pattern for JSON/SQL data storage
+	 *
 	 */
 	class Data_Credential extends Data_Core {
 		const DataFile = 'Data/data.credential.txt';
@@ -136,7 +138,7 @@
 		 *
 		 * @param Credential $oCredential
 		 */
-		static public function DeleteJSON(Credential $oCredential) {
+		static protected function DeleteJSON(Credential $oCredential) {
 			$rFile = static::OpenFileToRead();
 			$aData = array();
 
@@ -164,7 +166,7 @@
 		 *
 		 * @param Credential $oCredential
 		 */
-		static public function DeleteSQL(Credential $oCredential) {
+		static protected function DeleteSQL(Credential $oCredential) {
 			$oSqlConnection = \Sql\Connection::Make();
 			$oSqlConnection->Delete('app_credential', 'api_public', $oCredential->api_public);
 			Log::Write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
@@ -199,7 +201,7 @@
 		 * @return Credential
 		 * @throws InvalidCredentialException
 		 */
-		static public function GetOneByPublicKeyJSON($sApiPublic = '') {
+		static protected function GetOneByPublicKeyJSON($sApiPublic = '') {
 			$rFile = static::OpenFileToRead();
 			while(($sLine = fgets($rFile)) !== false) {
 				$oObject = new Credential(JsonSerializer::DeSerialize($sLine));
@@ -220,7 +222,7 @@
 		 * @return Credential
 		 * @throws InvalidCredentialException
 		 */
-		static public function GetOneByPublicKeySQL($sApiPublic = '') {
+		static protected function GetOneByPublicKeySQL($sApiPublic = '') {
 			$oSqlConnection = \Sql\Connection::Make();
 			$aRow = $oSqlConnection->SelectOne("
 				SELECT *
@@ -230,6 +232,71 @@
 
 			if(!empty($aRow)) {
 				return new Credential((object)$aRow);
+			}
+
+			throw new InvalidCredentialException();
+		}
+
+		/**
+		 * Return all Credentials
+		 *
+		 * @static
+		 *
+		 * @return Credential
+		 * @throws InvalidCredentialException
+		 * @throws \Exception
+		 */
+		static public function GetAll()
+		{
+			if (\Config::CredentialStorageType === 'JSON') {
+				return self::GetAllJSON();
+			} else if (\Config::CredentialStorageType === 'SQL') {
+				return self::GetAllSQL();
+			}
+			throw new \Exception('Wrong CredentialStorageType in config');
+		}
+
+		/**
+		 * Return one Credential in JSON based on the Public Key
+		 *
+		 * @static
+		 *
+		 * @return Credential
+		 * @throws InvalidCredentialException
+		 */
+		static protected function GetAllJSON() {
+			$rFile = static::OpenFileToRead();
+			$aCredentials = [];
+			while(($sLine = fgets($rFile)) !== false) {
+				$aCredentials[] = new Credential(JsonSerializer::DeSerialize($sLine));
+			}
+			if(!empty($aCredentials)) {
+				return $aCredentials;
+			}
+			throw new InvalidCredentialException();
+		}
+
+		/**
+		 * Return one Credential in SQL based on the Public Key
+		 *
+		 * @static
+		 *
+		 * @return Credential
+		 * @throws InvalidCredentialException
+		 */
+		static protected function GetAllSQL() {
+			$oSqlConnection = \Sql\Connection::Make();
+			$aRows = $oSqlConnection->Select("
+				SELECT *
+				FROM `app_credential`
+			");
+
+			if(!empty($aRows)) {
+				$aCredentials = [];
+				foreach($aRows as $i => $aRow) {
+					$aCredentials[] = new Credential((object)$aRow);
+				}
+				return $aCredentials;
 			}
 
 			throw new InvalidCredentialException();
