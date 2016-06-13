@@ -44,6 +44,21 @@
 			$this->SetCreateDate($oObject->create_date);
 		}
 
+		public function ToArray() {
+			return [
+				'api_public' => $this->ApiPublic,
+				'api_secret' => $this->ApiSecret,
+				'api_root' => $this->ApiRoot,
+				'return_url' => $this->ReturnUrl,
+				'customer_id' => $this->CustomerId,
+				'create_date' => $this->CreateDate,
+			];
+		}
+
+		public function ToStd() {
+			return (object)$this->ToArray();
+		}
+
 		/**
 		 * @return string
 		 */

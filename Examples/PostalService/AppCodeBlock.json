@@ -2,13 +2,13 @@
 	"views": [
 		{
 			"name":     "onload",
-			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/PostalService/Endpoint.php",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
 			"elements": [
 				{
 					"name":         "intro_line1",
 					"label":        "Pigeon Postal Service - Label creator",
 					"element_type": "text",
-					"value":        "<img src=\"https://ameijer-app.ccvdev.nl/Examples/PostalService/icon_thumb.png\" class=\"pull-left\">With <strong>Pigeon Postal Service</strong> you can create packaging labels in advance, making it easy to print labels in advance. Depending on your label printer you can choose the correct size for the label. Use the <em>'Track & Trace prefix'</em> so you can easily recognize from which webshop the label was created. <br /><br />Thank you for using PPS."
+					"value":        "<img src=\"https://demo.securearea.eu/Examples/PostalService/icon_thumb.png\" class=\"pull-left\">With <strong>Pigeon Postal Service</strong> you can create packaging labels in advance, making it easy to print labels in advance. Depending on your label printer you can choose the correct size for the label. Use the <em>'Track & Trace prefix'</em> so you can easily recognize from which webshop the label was created. <br /><br />Thank you for using PPS."
 				},
 				{
 					"name":         "intro_line2",
@@ -74,7 +74,7 @@
 		},
 		{
 			"name":     "succes",
-			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/PostalService/Endpoint.php",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
 			"elements": [
 				{
 					"name":         "description",
@@ -92,7 +92,7 @@
 		},
 		{
 			"name":     "succes-direct-download",
-			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/PostalService/Endpoint.php",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
 			"elements": [
 				{
 					"name":         "description",

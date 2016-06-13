@@ -13,6 +13,9 @@
 	use AppConnector\Json\JsonSerializer;
 	use AppConnector\Log\Log;
 
+	require_once('Config.php');
+	require_once('Sql/Connection.php');
+
 	require_once('Data/Data_Core.php');
 	require_once('Data/Data_Credential.php');
 	require_once('Data/Data_WebHook.php');
@@ -33,10 +36,11 @@
 	 * @package AppConnector
 	 * @author  Adriaan Meijer
 	 * @date    2014-10-13
-	 * @version 1.0    - First draft
-	 *          1.1    - Added logging
-	 *          1.2    - Added construct check on config costants
-	 *          1.3	   - Added additional examples for interactive code blocks
+	 * @version 1.0    	- First draft
+	 *          1.1    	- Added logging
+	 *          1.2    	- Added construct check on config costants
+	 *          1.3	   	- Added additional examples for interactive code blocks
+	 * 			1.4		- Nick Postma: demo.securearea.eu replacement with config data
 	 */
 	class AppConnector {
 		/**
@@ -44,21 +48,21 @@
 		 * You can find this as a property of the App in the Developer App Center
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 */
-		const AppSecretKey = '';
+		const AppSecretKey = \Config::AppSecretKey;
 		#const AppSecretKey = null;
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/Handshake.php
 		 */
-		const AppHandshakeUri = 'https://demo.securearea.eu/Handshake.php';
+		const AppHandshakeUri = \Config::AppHandshakeUri;
 		#const AppHandshakeUri = null;
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/UnInstall.php
 		 */
-		const AppUninstallUri = 'https://demo.securearea.eu/UnInstall.php';
+		const AppUninstallUri = \Config::AppUninstallUri;
 		#const AppUninstallUri = null;
 
 		/**
@@ -248,6 +252,10 @@
 
 			#Creating new codeblock for the send service.
 			$sData                           = file_get_contents('Examples/PostalService/AppCodeBlock.json');
+
+			#Replace demo.securearea.eu for config setting if default scheme is used
+			$sData 							 = str_replace("https://demo.securearea.eu", \Config::AppUri, $sData);
+
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
 			$oCodeBlock->interactive_content = json_decode($sData);
@@ -334,6 +342,8 @@
 			$sStringToHash = implode(static::Hash_Field_Separator, $aDataToHash);
 
 			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
+
+			Log::Write('ValidateHash', 'Secr', var_export($aRequestHeaders, true));
 
 			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
 				throw new InvalidHashException();
