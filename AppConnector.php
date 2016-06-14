@@ -343,8 +343,6 @@
 
 			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
 
-			Log::Write('ValidateHash', 'Secr', var_export($aRequestHeaders, true));
-
 			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
 				throw new InvalidHashException();
 			}
