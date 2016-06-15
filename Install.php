@@ -143,6 +143,30 @@
 			</div>
 		</div>
 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Interactive App Code block installation - Drone Delivery Service
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>This will install the app after creating two App Code blocks that interact with each other. In this example a Drone Delivery service is installed. In the
+					order management on the tab 'Connections' the merchant can choose different options for delivery. Delivery information can be updated per user. This codeblock is installed in the user edit form under 'My customers'.</p>
+
+				<form action="Install.php" method="post">
+					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+					<input type="hidden" name="install_type" id="install_type" value="dronedelivery_service"/>
+
+					<label for="customer_id">Customer Id</label>
+					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+					<button name="Cancel" class="btn">Cancel</button>
+					<button name="Install" class="btn btn-success">Install</button>
+				</form>
+			</div>
+		</div>
+
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title">
