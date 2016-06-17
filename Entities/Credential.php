@@ -45,6 +45,38 @@
 		}
 
 		/**
+		 * Convert this credential object to an array
+		 * @return array
+		 */
+		public function ToArray() {
+			return [
+				'api_public' => $this->ApiPublic,
+				'api_secret' => $this->ApiSecret,
+				'api_root' => $this->ApiRoot,
+				'return_url' => $this->ReturnUrl,
+				'customer_id' => $this->CustomerId,
+				'create_date' => $this->CreateDate,
+			];
+		}
+
+		/**
+		 * Convert this credential object to an std object
+		 * @return object
+		 */
+		public function ToStd() {
+			return (object)$this->ToArray();
+		}
+
+		/**
+		 * Print this credential as an array
+		 * @return string
+		 */
+		public function __toString()
+		{
+			return print_r($this->ToArray(), 1);
+		}
+
+		/**
 		 * @return string
 		 */
 		public function GetApiPublic() {

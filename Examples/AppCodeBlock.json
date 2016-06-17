@@ -87,7 +87,7 @@
 			]
 		},
 		{
-			"name":     "succes",
+			"name":     "success",
 			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
 			"elements": [
 				{
