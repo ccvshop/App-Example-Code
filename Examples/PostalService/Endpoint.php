@@ -1,5 +1,5 @@
 <?php
-
+	require_once('../../Config.php');
 	$oObject = json_decode(@file_get_contents('php://input'));
 
 	#Check if the merchant submitted the label creation form.
@@ -17,12 +17,15 @@
 			$oResponse->data                    = [];
 			$oResponse->data['package_label_1'] = 'https://demo.securearea.eu/Examples/PostalService/Download.php?file=specimen_label.png';
 		}
-		echo json_encode($oResponse, JSON_PRETTY_PRINT);
-		die();
+
+		$oResponse->data['package_label_1']    = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['package_label_1']);
+		$oResponse->data['attachment_label_1'] = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['attachment_label_1']);
+	} else {
+
+		#Show inital start form.
+		$oResponse       = new \stdClass();
+		$oResponse->view = 'onload';
 	}
-
-	#Show inital start form.
-	$oResponse       = new \stdClass();
-	$oResponse->view = 'onload';
-	echo json_encode($oResponse, JSON_PRETTY_PRINT);
-
+	$sResponse = json_encode($oResponse, JSON_PRETTY_PRINT);
+	echo $sResponse;
+	die();
