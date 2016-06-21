@@ -49,7 +49,7 @@
 		 */
 		static private function OpenFile() {
 			if(!is_resource(static::$rLogFile)) {
-				static::$rLogFile = @fopen('./Log/' . date('Y-m-d') . '_AppConnector.log', 'a');
+				static::$rLogFile = @fopen($_SERVER['DOCUMENT_ROOT'].'/Log/' . date('Y-m-d') . '_AppConnector.log', 'a');
 			}
 			return static::$rLogFile;
 		}

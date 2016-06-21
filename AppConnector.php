@@ -380,6 +380,15 @@
 		}
 
 		/**
+		 * @param string $sEndPoint
+		 *
+		 * @throws \AppConnector\Exceptions\InvalidHashException
+		 */
+		public function ValidateInteractiveCodeBlock($sEndPoint) {
+			$this->ValidateHash($sEndPoint);
+		}
+
+		/**
 		 * @return Credential
 		 * @throws InvalidCredentialException
 		 */
@@ -404,9 +413,9 @@
 			$aDataToHash[] = @file_get_contents('php://input');
 
 			$sStringToHash = implode(static::Hash_Field_Separator, $aDataToHash);
-
+//echo $sUri;
+//			die();
 			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
-
 			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
 				throw new InvalidHashException();
 			}
