@@ -26,14 +26,14 @@
 				$oResponse->data                       = [];
 				$oResponse->data['package_label_1']    = 'https://demo.securearea.eu/Examples/PostalService/Download.php?file=specimen_label.png';
 				$oResponse->data['attachment_label_1'] = 'https://demo.securearea.eu/Examples/PostalService/Download.php?file=specimen_label.png';
+				$oResponse->data['attachment_label_1'] = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['attachment_label_1']);
 			} else {
 				$oResponse->view                    = 'success';
 				$oResponse->data                    = [];
 				$oResponse->data['package_label_1'] = 'https://demo.securearea.eu/Examples/PostalService/Download.php?file=specimen_label.png';
 			}
 
-			$oResponse->data['package_label_1']    = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['package_label_1']);
-			$oResponse->data['attachment_label_1'] = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['attachment_label_1']);
+			$oResponse->data['package_label_1'] = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['package_label_1']);
 		} else {
 
 			#Show inital start form.
