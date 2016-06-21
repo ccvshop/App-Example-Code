@@ -41,7 +41,7 @@
 	 *          1.2    	- Added construct check on config costants
 	 *          1.3	   	- Added additional examples for interactive code blocks
 	 * 			1.4		- Nick Postma: demo.securearea.eu replacement with config data
- * 				1.5		- Nick Postma: Added Drone delivery service example
+	* 			1.5		- Nick Postma: Added Drone delivery service example
 	 */
 	class AppConnector {
 		/**
@@ -413,8 +413,7 @@
 			$aDataToHash[] = @file_get_contents('php://input');
 
 			$sStringToHash = implode(static::Hash_Field_Separator, $aDataToHash);
-//echo $sUri;
-//			die();
+
 			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
 			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
 				throw new InvalidHashException();

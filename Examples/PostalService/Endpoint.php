@@ -4,19 +4,17 @@
 	use AppConnector\Log\Log;
 
 	try {
-		require_once($_SERVER['DOCUMENT_ROOT'] . '/Config.php');
-		require_once($_SERVER['DOCUMENT_ROOT'] . '/AppConnector.php');
+		require_once('../../Config.php');
+		require_once('../../AppConnector.php');
 
 		Log::WriteStartCall();
 		Log::Write('Endpoint', 'INPUT', @file_get_contents('php://input'));
 
 		$oAppConnector = new AppConnector();
-		$oAppConnector->ValidateInteractiveCodeBlock(\Config::AppUri. $_SERVER['REQUEST_URI']);
+		$oAppConnector->ValidateInteractiveCodeBlock(\Config::AppUri . $_SERVER['REQUEST_URI']);
 
 		header('HTTP/1.1 200 OK', true, 200);
 		$oObject = json_decode(@file_get_contents('php://input'));
-
-		$aRequestHeaders = apache_request_headers();
 
 		#Check if the merchant submitted the label creation form.
 		#We could of course check if this order has been submitted in the past and directly show the label.
@@ -32,7 +30,6 @@
 				$oResponse->view                    = 'success';
 				$oResponse->data                    = [];
 				$oResponse->data['package_label_1'] = 'https://demo.securearea.eu/Examples/PostalService/Download.php?file=specimen_label.png';
-				$oResponse->data['description']     = $aRequestHeaders['x-hash'];
 			}
 
 			$oResponse->data['package_label_1']    = str_replace('https://demo.securearea.eu', \Config::AppUri, $oResponse->data['package_label_1']);
