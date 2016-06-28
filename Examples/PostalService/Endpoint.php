@@ -42,6 +42,13 @@
 		}
 		$sResponse = json_encode($oResponse, JSON_PRETTY_PRINT);
 
+		$aDataToHash   = [];
+		$aDataToHash[] = \Config::AppUri . $_SERVER['REQUEST_URI'];
+		$aDataToHash[] = $sResponse;
+		$sStringToHash = implode(AppConnector::Hash_Field_Separator, $aDataToHash);
+		$sHash = hash_hmac(AppConnector::Hash_Encryption, $sStringToHash, AppConnector::AppSecretKey);
+		header('x-hash: ' . $sHash);
+
 		echo $sResponse;
 		die();
 	} catch(\Exception $oEx) {
