@@ -21,9 +21,9 @@
 	$_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
 
 	if(empty($_POST)) {
-		Log::WriteStartCall();
+		Log::WriteStartCall(__FILE__);
 		Log::Write('Install', 'VIEW', 'api_public: ' . $_GET['api_public']);
-		Log::WriteEndCall();
+		Log::WriteEndCall(__FILE__);
 		#First visit
 
 		?>
@@ -188,13 +188,14 @@
 	} else {
 
 		try {
+			Log::WriteStartCall(__FILE__);
 			#Installing App
 			$oAppConnector = new AppConnector();
 			$oAppConnector->Install();
 
-			Log::WriteStartCall();
+
 			Log::Write('Install', 'OUTPUT', 'Location: ' . $oAppConnector->GetCredential()->GetReturnUrl());
-			Log::WriteEndCall();
+			Log::WriteEndCall(__FILE__);
 
 			header('Location: ' . $oAppConnector->GetCredential()->GetReturnUrl());
 			die();

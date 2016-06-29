@@ -4,6 +4,7 @@
 	use AppConnector\Entities\Credential;
 	use AppConnector\Exceptions\InvalidCredentialException;
 	use AppConnector\Log\Log;
+	use AppConnector\Sql\Connection;
 
 	/**
 	 * Class Data_Credential_SQL
@@ -17,7 +18,7 @@
 	 * 			1.2		- Nick Postma: Implemented strategy pattern for Data_Credential and now uses oCredential->ToArray()
 	 *
 	 */
-	class Data_Credential_SQL   extends Data_Core implements IData_Credential {
+	class Data_Credential_SQL extends Data_Core implements IData_Credential {
 		/**
 		 * Inserts 1 row containing a Credential into the data file
 		 *
@@ -29,7 +30,7 @@
 		 * @throws \Exception
 		 */
 		static public function Insert(Credential $oCredential) {
-			$oSqlConnection = \Sql\Connection::Make();
+			$oSqlConnection = Connection::Make();
 			$iInsertId = $oSqlConnection->Insert('app_credential', $oCredential->ToArray());
 			Log::Write('Data_Credential::Insert', 'INPUT', 'Row inserted into database with Id ' . $iInsertId);
 
@@ -46,7 +47,7 @@
 		 */
 		static public function Update(Credential $oCredential)
 		{
-			$oSqlConnection = \Sql\Connection::Make();
+			$oSqlConnection = Connection::Make();
 			$oSqlConnection->Update('app_credential', $oCredential->ToArray(), 'api_public', $oCredential->GetApiPublic());
 			Log::Write('Data_Credential::Update', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
 
@@ -64,8 +65,8 @@
 		 */
 		static public function Delete(Credential $oCredential)
 		{
-			$oSqlConnection = \Sql\Connection::Make();
-			$oSqlConnection->Delete('app_credential', 'api_public', $oCredential->api_public);
+			$oSqlConnection = Connection::Make();
+			$oSqlConnection->Delete('app_credential', 'api_public', $oCredential->GetApiPublic());
 			Log::Write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
 
 			return true;
@@ -83,7 +84,7 @@
 		 */
 		static public function GetOneByPublicKey($sApiPublic = '')
 		{
-			$oSqlConnection = \Sql\Connection::Make();
+			$oSqlConnection = Connection::Make();
 			$aRow = $oSqlConnection->SelectOne("
 				SELECT *
 				FROM `app_credential`
@@ -108,7 +109,7 @@
 		 */
 		static public function GetAll()
 		{
-			$oSqlConnection = \Sql\Connection::Make();
+			$oSqlConnection = Connection::Make();
 			$aRows = $oSqlConnection->Select("
 				SELECT *
 				FROM `app_credential`

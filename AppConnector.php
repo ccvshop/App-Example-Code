@@ -9,6 +9,7 @@
 	use AppConnector\Exceptions\InvalidCredentialException;
 	use AppConnector\Exceptions\InvalidHashException;
 	use AppConnector\Exceptions\InvalidJsonException;
+	use AppConnector\Http\Hash;
 	use AppConnector\Http\WebRequest;
 	use AppConnector\Json\JsonSerializer;
 	use AppConnector\Log\Log;
@@ -27,6 +28,7 @@
 	require_once('Exceptions/InvalidJsonException.php');
 	require_once('Json/JsonSerializer.php');
 	require_once('Http/WebRequest.php');
+	require_once('Http/Hash.php');
 	require_once('Log/Log.php');
 
 	/**
@@ -45,43 +47,6 @@
 	 */
 	class AppConnector {
 		/**
-		 * This contains a secret key which is unique for this App.
-		 * You can find this as a property of the App in the Developer App Center
-		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
-		 */
-		const AppSecretKey = \Config::AppSecretKey;
-		#const AppSecretKey = null;
-
-		/**
-		 * This is the URI of the handshake. Use this to validate calls from the App store.
-		 * Example: https://demo.securearea.eu/Handshake.php
-		 */
-		const AppHandshakeUri = \Config::AppHandshakeUri;
-		#const AppHandshakeUri = null;
-
-		/**
-		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
-		 * Example: https://demo.securearea.eu/UnInstall.php
-		 */
-		const AppUninstallUri = \Config::AppUninstallUri;
-		#const AppUninstallUri = null;
-
-		/**
-		 * This is the field in the header of each request that contains the hash. Do NOT change this unless instructed by CCV.
-		 */
-		const Header_Hash = 'x-hash';
-
-		/**
-		 * This is the encryption method with which the hash was made. Do NOT change this unless instructed by CCV.
-		 */
-		const Hash_Encryption = 'sha512';
-
-		/**
-		 * This character separates the fields which are hashed. Do NOT change this unless instructed by CCV.
-		 */
-		const Hash_Field_Separator = '|';
-
-		/**
 		 * @var Credential Credential Contains the credentials. Used for example purposes only
 		 */
 		protected $Credential;
@@ -92,16 +57,16 @@
 		protected $RemoteAppId = null;
 
 		public function __construct() {
-			if(is_null($this::AppSecretKey)) {
-				throw new \Exception('AppSecretKey is empty. Please config AppConnector.php');
+			if(is_null(Config::AppSecretKey)) {
+				throw new \Exception('AppSecretKey is empty. Please config Config.php');
 			}
 
-			if(is_null($this::AppHandshakeUri)) {
-				throw new \Exception('AppHandshakeUri is empty. Please config AppConnector.php');
+			if(is_null(Config::AppHandshakeUri)) {
+				throw new \Exception('AppHandshakeUri is empty. Please config Config.php');
 			}
 
-			if(is_null($this::AppUninstallUri)) {
-				throw new \Exception('AppUnInstallUri is empty. Please config AppConnector.php');
+			if(is_null(Config::AppUninstallUri)) {
+				throw new \Exception('AppUnInstallUri is empty. Please config Config.php');
 			}
 		}
 
@@ -113,12 +78,14 @@
 		 * @throws InvalidJsonException
 		 */
 		public function ProcessCredentials() {
-			$this->ValidateHash($this::AppHandshakeUri);
+			Log::Write(__FUNCTION__, 'START');
+			$this->ValidateHash(Config::AppHandshakeUri);
 
 			$oData = JsonSerializer::DeSerialize(@file_get_contents('php://input'));
 
 			$this->Credential = new Credential($oData);
 			Data_Credential::Insert($this->Credential);
+			Log::Write(__FUNCTION__, 'END');
 		}
 
 		/**
@@ -258,7 +225,7 @@
 			$sData                           = file_get_contents('Examples/PostalService/AppCodeBlock.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", \Config::AppUri, $sData);
+			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
@@ -302,7 +269,7 @@
 			$sData                           = file_get_contents('Examples/Dronedelivery/AppCodeBlockOrder.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", \Config::AppUri, $sData);
+			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
@@ -316,7 +283,7 @@
 			$sData                           = file_get_contents('Examples/Dronedelivery/AppCodeBlockUser.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", \Config::AppUri, $sData);
+			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-login_users-edit_user';
@@ -364,7 +331,7 @@
 		 * @throws InvalidJsonException
 		 */
 		public function UnInstall() {
-			$this->ValidateHash($this::AppUninstallUri);
+			$this->ValidateHash(Config::AppUninstallUri);
 
 			$oPostedData      = JsonSerializer::DeSerialize(@file_get_contents('php://input'));
 			$this->Credential = Data_Credential::GetOneByPublicKey($oPostedData->api_public);
@@ -379,14 +346,6 @@
 			Data_Credential::Delete($this->GetCredential());
 		}
 
-		/**
-		 * @param string $sEndPoint
-		 *
-		 * @throws \AppConnector\Exceptions\InvalidHashException
-		 */
-		public function ValidateInteractiveCodeBlock($sEndPoint) {
-			$this->ValidateHash($sEndPoint);
-		}
 
 		/**
 		 * @return Credential
@@ -408,17 +367,15 @@
 		 */
 		protected function ValidateHash($sUri) {
 			$aRequestHeaders = apache_request_headers();
-			Log::Write('ValidateHash', 'VALIDATE', $aRequestHeaders[self::Header_Hash]);
-			$aDataToHash[] = $sUri;
-			$aDataToHash[] = @file_get_contents('php://input');
 
-			$sStringToHash = implode(static::Hash_Field_Separator, $aDataToHash);
 
-			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
-			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
+			$oHash  = new Hash();
+			$bValid = $oHash->AddData($sUri)->AddData(@file_get_contents('php://input'))->IsValid($aRequestHeaders[Hash::Header_Hash]);
+
+			if($bValid === false) {
 				throw new InvalidHashException();
 			}
-			Log::Write('ValidateHash', 'VALIDATE OK', $aRequestHeaders[self::Header_Hash]);
+
 		}
 
 		protected function GetRemoteAppId() {

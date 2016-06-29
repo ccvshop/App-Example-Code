@@ -1,6 +1,7 @@
 <?
 	namespace AppConnector\Data;
 
+	use AppConnector\Config;
 	use AppConnector\Entities\Credential;
 	use AppConnector\Exceptions\InvalidCredentialException;
 
@@ -20,11 +21,19 @@
 	 */
 	class Data_Credential {
 
+		/**
+		 * @static
+		 *
+		 * @return IData_Credential
+		 * @throws \Exception
+		 */
 		protected static function GetHandlerClassname() {
-			$sDataCrentialClass = "AppConnector\Data\Data_Credential_" . \Config::CredentialStorageType;
+			$sDataCrentialClass = "AppConnector\Data\Data_Credential_" . Config::CredentialStorageType;
 
 			if(!class_exists($sDataCrentialClass)) {
-				throw new \Exception('Could not determine the credential handler (' . $sDataCrentialClass . '). Please check CredentialStorageType in the config class');
+				throw new \Exception('Could not determine the credential handler (' .
+									 $sDataCrentialClass .
+									 '). Please check CredentialStorageType in the config class');
 			}
 
 			return $sDataCrentialClass;
@@ -36,6 +45,7 @@
 		 * @static
 		 *
 		 * @param Credential $oCredential
+		 *
 		 * @return bool
 		 * @throws \AppConnector\Exceptions\InvalidJsonException
 		 * @throws \Exception
@@ -50,7 +60,10 @@
 		 *
 		 * @static
 		 *
-		 * @param Credential $oCredential
+		 * @param \AppConnector\Entities\Credential $oCredential
+		 *
+		 * @return bool
+		 * @throws \Exception
 		 */
 		static public function Update(Credential $oCredential) {
 			$sDataCrentialClass = static::GetHandlerClassname();
@@ -59,10 +72,11 @@
 
 		/**
 		 * Deletes 1 row containing a WebHook based on the Public Key
-		 *
 		 * @static
 		 *
-		 * @param Credential $oCredential
+		 * @param \AppConnector\Entities\Credential $oCredential
+		 *
+		 * @return bool
 		 * @throws \Exception
 		 */
 		static public function Delete(Credential $oCredential) {
@@ -76,6 +90,7 @@
 		 * @static
 		 *
 		 * @param string $sApiPublic
+		 *
 		 * @return Credential
 		 * @throws InvalidCredentialException
 		 * @throws \Exception

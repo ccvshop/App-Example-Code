@@ -33,11 +33,11 @@
 		}
 
 
-		static public function WriteStartCall(){
-			static::Write('START CALL');
+		static public function WriteStartCall($sFile = ''){
+			static::Write('START CALL', '', $sFile);
 		}
-		static public function WriteEndCall(){
-			static::Write('END CALL');
+		static public function WriteEndCall($sFile = ''){
+			static::Write('END CALL', '', $sFile);
 			fwrite(static::OpenFile(), "\r\n");
 		}
 
