@@ -187,7 +187,7 @@
 				?>
 				<form action="Install.php" method="post">
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
-					<input type="hidden" name="install_type" id="install_type" value="dronedelivery_service"/>
+					<input type="hidden" name="install_type" id="install_type" value="app_psp"/>
 
 					<label for="customer_id">Customer Id (for test purpose only)</label>
 					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>

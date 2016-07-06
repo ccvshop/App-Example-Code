@@ -3,19 +3,26 @@
 	namespace PSPConnector;
 
 	use AppConnector\AppConnector;
+	use AppConnector\Exceptions\InvalidHashException;
 	use AppConnector\Exceptions\InvalidMethod;
+	use AppConnector\Http\Hash;
 
 	class PSPConnector {
 		/** @var  \AppConnector\AppConnector */
 		protected $oAppConnector;
 
-		const PaymethodsUri = 'https://vertoshop.devdev.nl/paymethods';
+		const PaymethodsUri = 'https://ameijer-app-psp.ccvdev.nl/paymethods';
 
 
 		public function __construct(){
-			$this->oAppConnector = new AppConnector();
+			$aRequestHeaders = apache_request_headers();
 
-			$this->oAppConnector->ValidateHash($this::PaymethodsUri);
+			$oHash  = new Hash();
+			$bValid = $oHash->AddData($this::PaymethodsUri)->AddData(@file_get_contents('php://input'))->IsValid($aRequestHeaders[Hash::Header_Hash]);
+
+			if($bValid === false) {
+				throw new InvalidHashException();
+			}
 		}
 
 		public function ProcessPaymethods(){

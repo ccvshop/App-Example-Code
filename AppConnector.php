@@ -115,6 +115,9 @@
 				case 'dronedelivery_service':
 					$this->Install_DronedeliveryService();
 					break;
+				case 'app_psp':
+					$this->Install_AppPSP();
+					break;
 				case 'bare':
 					#Just install the app.
 				default:
@@ -316,7 +319,7 @@
 			#Marking app as 'installed'
 			$oAppPSP           = new \stdClass();
 			$oAppPSP->name     = 'Custom App PSP';
-			$oAppPSP->endpoint = 'https://vertoshop.devdev.nl';
+			$oAppPSP->endpoint = 'https://ameijer-app-psp.ccvdev.nl/';
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/apppsp/');
 			$oWebRequest->SetData($oAppPSP);

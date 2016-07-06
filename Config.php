@@ -14,7 +14,7 @@
 		 * This is the base of the app URI.
 		 * This Uri is used in the update schema example
 		 */
-		const AppUri = 'https://ameijer-app.ccvdev.nl';
+		const AppUri = 'https://ameijer-app-psp.ccvdev.nl';
 
 		/**
 		 * This contains a secret key which is unique for this App.
@@ -22,21 +22,21 @@
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 * This key is used in the AppConnector.php
 		 */
-		const AppSecretKey = '63vyl94ceu48yfdbqxjwi5dp39ko6mo2';
+		const AppSecretKey = '3gwkvacbetddvt3j4etexmhy1msmspbm';
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/Handshake.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppHandshakeUri = 'https://ameijer-app.ccvdev.nl/Handshake.php';
+		const AppHandshakeUri = 'https://ameijer-app-psp.ccvdev.nl/Handshake.php';
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/UnInstall.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppUninstallUri = 'https://ameijer-app.ccvdev.nl/UnInstall.php';
+		const AppUninstallUri = 'https://ameijer-app-psp.ccvdev.nl/UnInstall.php';
 
 		/**
 		 * Default setting for storing credentials.
