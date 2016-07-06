@@ -1,0 +1,4 @@
+RewriteEngine On
+
+RewriteRule ^paymethods$ /Paymethods.php [L,NC]
+RewriteRule ^transactions$ /Transactions.php [L,NC]

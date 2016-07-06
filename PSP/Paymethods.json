@@ -1,0 +1,49 @@
+[
+	{
+		"id":             "ideal",
+		"name":           "iDEAL",
+		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_ideal.jpg",
+		"type":           "postsale",
+		"requiredFields": false,
+		"issuers":        [
+			{
+				"id":   "ing",
+				"name": "ING Bank"
+			},
+			{
+				"id":   "rabo",
+				"name": "Rabobank"
+			}
+		]
+	},
+	{
+		"id":             "bcmc",
+		"name":           "BC/MC",
+		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_bcmc.jpg",
+		"type":           "postsale",
+		"requiredFields": false,
+		"issuers":        false
+	},
+	{
+		"id":             "visa",
+		"name":           "Visa",
+		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_visa.jpg",
+		"type":           "postsale",
+		"requiredFields": false,
+		"issuers":        false
+	},
+	{
+		"id":             "afterpay",
+		"name":           "Afterpay",
+		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/24.png",
+		"type":           "presale",
+		"requiredFields": [
+			"name",
+			"gender",
+			"telefone",
+			"initials",
+			"birthdate"
+		],
+		"issuers":        false
+	}
+]

@@ -38,12 +38,12 @@
 	 * @package AppConnector
 	 * @author  Adriaan Meijer
 	 * @date    2014-10-13
-	 * @version 1.0    	- First draft
-	 *          1.1    	- Added logging
-	 *          1.2    	- Added construct check on config costants
-	 *          1.3	   	- Added additional examples for interactive code blocks
-	 * 			1.4		- Nick Postma: demo.securearea.eu replacement with config data
-	* 			1.5		- Nick Postma: Added Drone delivery service example
+	 * @version 1.0        - First draft
+	 *          1.1        - Added logging
+	 *          1.2        - Added construct check on config costants
+	 *          1.3        - Added additional examples for interactive code blocks
+	 *            1.4        - Nick Postma: demo.securearea.eu replacement with config data
+	 *            1.5        - Nick Postma: Added Drone delivery service example
 	 */
 	class AppConnector {
 		/**
@@ -222,10 +222,10 @@
 			}
 
 			#Creating new codeblock for the send service.
-			$sData                           = file_get_contents('Examples/PostalService/AppCodeBlock.json');
+			$sData = file_get_contents('Examples/PostalService/AppCodeBlock.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
@@ -235,7 +235,6 @@
 			$oWebRequest->SetData($oCodeBlock);
 			$oWebRequest->Post();
 		}
-
 
 		/**
 		 * Installs the Drone Delivery Service track and trace. A merchant can update track and trace information in his order management and user edit form.
@@ -266,10 +265,10 @@
 			}
 
 			#Creating new codeblock for the option service.
-			$sData                           = file_get_contents('Examples/Dronedelivery/AppCodeBlockOrder.json');
+			$sData = file_get_contents('Examples/Dronedelivery/AppCodeBlockOrder.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
@@ -280,10 +279,10 @@
 			$oWebRequest->Post();
 
 			#Creating new codeblock for the edit service.
-			$sData                           = file_get_contents('Examples/Dronedelivery/AppCodeBlockUser.json');
+			$sData = file_get_contents('Examples/Dronedelivery/AppCodeBlockUser.json');
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData 							 = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
 			$oCodeBlock->placeholder         = 'backend-login_users-edit_user';
@@ -292,8 +291,36 @@
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);
 			$oWebRequest->Post();
+		}
 
+		protected function Install_AppPSP() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+			$oWebRequest->SetApiResource('/api/rest/v1/apps');
+			$sOutput = $oWebRequest->Get();
 
+			$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
+
+			if(!isset($aCollectionOfApps->items)) {
+				throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
+			}
+
+			if(count($aCollectionOfApps->items) > 1) {
+				throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
+			}
+			$iAppId = $aCollectionOfApps->items[0]->id;
+
+			#Marking app as 'installed'
+			$oAppPSP           = new \stdClass();
+			$oAppPSP->name     = 'Custom App PSP';
+			$oAppPSP->endpoint = 'https://vertoshop.devdev.nl';
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/apppsp/');
+			$oWebRequest->SetData($oAppPSP);
+			$oWebRequest->Post();
 		}
 
 		/**
@@ -346,7 +373,6 @@
 			Data_Credential::Delete($this->GetCredential());
 		}
 
-
 		/**
 		 * @return Credential
 		 * @throws InvalidCredentialException
@@ -368,14 +394,12 @@
 		protected function ValidateHash($sUri) {
 			$aRequestHeaders = apache_request_headers();
 
-
 			$oHash  = new Hash();
 			$bValid = $oHash->AddData($sUri)->AddData(@file_get_contents('php://input'))->IsValid($aRequestHeaders[Hash::Header_Hash]);
 
 			if($bValid === false) {
 				throw new InvalidHashException();
 			}
-
 		}
 
 		protected function GetRemoteAppId() {
