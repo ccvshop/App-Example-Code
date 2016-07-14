@@ -4,7 +4,7 @@
 		"name":           "iDEAL",
 		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_ideal.jpg",
 		"type":           "postsale",
-		"requiredFields": false,
+		"requiredFields": [],
 		"issuers":        [
 			{
 				"id":   "ing",
@@ -21,16 +21,16 @@
 		"name":           "BC/MC",
 		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_bcmc.jpg",
 		"type":           "postsale",
-		"requiredFields": false,
-		"issuers":        false
+		"requiredFields": [],
+		"issuers":        []
 	},
 	{
 		"id":             "visa",
 		"name":           "Visa",
 		"icon":           "https://aadtest.securearea.eu/website/Images/PayMethods/17_visa.jpg",
 		"type":           "postsale",
-		"requiredFields": false,
-		"issuers":        false
+		"requiredFields": [],
+		"issuers":        []
 	},
 	{
 		"id":             "afterpay",
@@ -44,6 +44,6 @@
 			"initials",
 			"birthdate"
 		],
-		"issuers":        false
+		"issuers":        []
 	}
 ]

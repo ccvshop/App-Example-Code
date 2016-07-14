@@ -320,6 +320,7 @@
 			$oAppPSP           = new \stdClass();
 			$oAppPSP->name     = 'Custom App PSP';
 			$oAppPSP->endpoint = 'https://ameijer-app-psp.ccvdev.nl/';
+			$oAppPSP->paymethods =  json_decode(file_get_contents('PSP/Paymethods.json'));
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/apppsp/');
 			$oWebRequest->SetData($oAppPSP);
