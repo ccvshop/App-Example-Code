@@ -48,6 +48,7 @@
 		public function Hash() {
 			$sStringToHash = implode($this::Hash_Field_Separator, $this->aDataToHash);
 			$sHash         = hash_hmac($this::Hash_Encryption, $sStringToHash, Config::AppSecretKey);
+
 			Log::Write('Hash::Hash', 'DATA', $sStringToHash);
 			Log::Write('Hash::Hash', 'GENERATE', $sHash);
 			return $sHash;
@@ -62,6 +63,7 @@
 				Log::Write('Hash::IsValid', 'VALID', 'OK');
 				return true;
 			}
+			Log::Write('Hash::IsValid', 'VALID', 'FAILED');
 			return false;
 		}
 	}

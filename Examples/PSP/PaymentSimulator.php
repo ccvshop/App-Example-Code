@@ -43,19 +43,36 @@
 </head>
 <body>
 
+<div class="container">
+	<h1>App PSP Simulator</h1>
+	<p>
 
-<h1>App PSP Simulator</h1>
-<p>
-
-</p>
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">
-			Debug info
-		</h3>
+	</p>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				Test Transaction
+			</h3>
+		</div>
+		<div class="panel-body">
+			<p>
+				Order <?= $oTransaction->GetOrderNumber(); ?> of  <?= $oTransaction->GetCurrency(); ?> <?= $oTransaction->GetAmount(); ?>
+				to be paid with <?= $oTransaction->GetMethod(); ?>.
+			</p>
+			<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->GetTransactionId(); ?>" method="post">
+				<button name="status" value="SUCCESS" class="btn btn-success">Success</button>
+				<button name="status" value="CANCEL" class="btn btn-danger">Cancel</button>
+			</form>
+		</div>
 	</div>
-	<div class="panel-body">
-		<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->GetTransactionId(); ?>" method="post">
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title">
+				Debug info
+			</h3>
+		</div>
+		<div class="panel-body">
+
 			<p>method: <?= $oTransaction->GetMethod(); ?> </p>
 			<p>issuer: <?= $oTransaction->GetIssuer(); ?> </p>
 			<p>return_url: <?= $oTransaction->GetReturnUrl(); ?> </p>
@@ -68,11 +85,9 @@
 			<p>language: <?= $oTransaction->GetLanguage(); ?></p>
 			<p>status: <?= $oTransaction->GetStatus(); ?></p>
 
-			<button name="status" value="SUCCESS" class="btn btn-success">Success</button>
-			<button name="status" value="CANCEL" class="btn btn-danger">Cancel</button>
-		</form>
+
+		</div>
 	</div>
 </div>
-
 </body>
 </html>
