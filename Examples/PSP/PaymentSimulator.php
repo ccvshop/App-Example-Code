@@ -72,7 +72,6 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-
 			<p>method: <?= $oTransaction->GetMethod(); ?> </p>
 			<p>issuer: <?= $oTransaction->GetIssuer(); ?> </p>
 			<p>return_url: <?= $oTransaction->GetReturnUrl(); ?> </p>
@@ -84,8 +83,6 @@
 			<p>create_date: <?= $oTransaction->GetCreated(); ?></p>
 			<p>language: <?= $oTransaction->GetLanguage(); ?></p>
 			<p>status: <?= $oTransaction->GetStatus(); ?></p>
-
-
 		</div>
 	</div>
 </div>
