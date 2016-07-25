@@ -15,7 +15,7 @@
 		require_once('../../Entities/Credential.php');
 		require_once('../../Entities/WebHook.php');
 		require_once('../../Entities/Transaction.php');
-		require_once('../../Examples/PSP/Transactions.php');
+		require_once('../../Examples/PSP/TransactionFactory.php');
 		require_once('../../Exceptions/InvalidApiResponse.php');
 		require_once('../../Exceptions/InvalidCredentialException.php');
 		require_once('../../Exceptions/InvalidHashException.php');
@@ -27,8 +27,8 @@
 		require_once('../../Log/Log.php');
 
 		\AppConnector\Log\Log::WriteStartCall(__FILE__);
-		$oTransactions = new \AppConnector\Examples\PSP\Transactions();
-		$sResponse     = $oTransactions->Create();
+		$oTransactionFactory = new \AppConnector\Examples\PSP\TransactionFactory();
+		$sResponse           = $oTransactionFactory->Create();
 
 		echo $sResponse;
 		\AppConnector\Log\Log::WriteEndCall(__FILE__);

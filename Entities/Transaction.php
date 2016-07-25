@@ -37,6 +37,8 @@
 		protected $transaction_id;
 		/** @var  int */
 		protected $created;
+		/** @var  string */
+		protected $birthdate;
 
 		public function __construct(\stdClass $oObject) {
 			$this->SetAmount($oObject->amount)
@@ -46,7 +48,8 @@
 				 ->SetOrderId($oObject->order_id)
 				 ->SetOrderNumber($oObject->order_number)
 				 ->SetMethod($oObject->method)
-				 ->SetIssuer($oObject->issuer);
+				 ->SetIssuer($oObject->issuer)
+				 ->SetBirthdate($oObject->birthdate);
 
 			if(empty($oObject->created)) {
 				$this->SetCreated(gmdate('r', time()));
@@ -84,6 +87,7 @@
 					'payUrl'         => $this->payUrl,
 					'transaction_id' => $this->transaction_id,
 					'created'        => $this->created,
+					'birthdate'        => $this->birthdate,
 
 			];
 		}
@@ -170,6 +174,31 @@
 		 */
 		public function GetCreated() {
 			return $this->created;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function GetBirthdate() {
+			return $this->birthdate;
+		}
+
+		public function GetAge() {
+			$oBirthDate = new \DateTime($this->birthdate);
+			$oNow       = new \DateTime();
+			$iAge       = $oBirthDate->diff($oNow)->format('%y');
+
+			return $iAge;
+		}
+
+		/**
+		 * @param string $birthdate
+		 *
+		 * @return Transaction
+		 */
+		public function SetBirthdate($birthdate) {
+			$this->birthdate = $birthdate;
+			return $this;
 		}
 
 		/**
