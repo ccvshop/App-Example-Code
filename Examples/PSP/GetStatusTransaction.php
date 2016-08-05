@@ -15,6 +15,7 @@
 		require_once('../../Entities/Credential.php');
 		require_once('../../Entities/WebHook.php');
 		require_once('../../Entities/Transaction.php');
+		require_once('../../Entities/Transaction/Address.php');
 		require_once('../../Exceptions/InvalidApiResponse.php');
 		require_once('../../Examples/PSP/TransactionFactory.php');
 		require_once('../../Exceptions/InvalidCredentialException.php');

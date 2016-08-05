@@ -29,43 +29,80 @@
 		/** @var  string */
 		protected $issuer;
 		/** @var  string */
-		protected $returnUrl;
+		protected $return_url;
+		/** @var  string */
+		protected $webhook_url;
 
 		/** @var  string */
-		protected $payUrl;
+		protected $pay_url;
 		/** @var  string */
 		protected $transaction_id;
 		/** @var  int */
 		protected $created;
+
+		/** @var  \AppConnector\Entities\Transaction\Address */
+		protected $billing_address;
+		/** @var  \AppConnector\Entities\Transaction\Address */
+		protected $shipping_address;
+
 		/** @var  string */
-		protected $birthdate;
+		protected $date_of_birth;
+
+		/** @var null|string */
+		protected $error = null;
 
 		public function __construct(\stdClass $oObject) {
-			$this->SetAmount($oObject->amount)
-				 ->SetCurrency($oObject->currency)
-				 ->SetLanguage($oObject->language)
-				 ->SetReturnUrl($oObject->returnUrl)
-				 ->SetOrderId($oObject->order_id)
-				 ->SetOrderNumber($oObject->order_number)
-				 ->SetMethod($oObject->method)
-				 ->SetIssuer($oObject->issuer)
-				 ->SetBirthdate($oObject->birthdate);
+			if(isset($oObject->amount)) {
+				$this->SetAmount($oObject->amount);
+			}
+			if(isset($oObject->currency)) {
+				$this->SetCurrency($oObject->currency);
+			}
+			if(isset($oObject->language)) {
+				$this->SetLanguage($oObject->language);
+			}
+			if(isset($oObject->return_url)) {
+				$this->SetReturnUrl($oObject->return_url);
+			}
+			if(isset($oObject->webhook_url)) {
+				$this->SetWebhookUrl($oObject->webhook_url);
+			}
+			if(isset($oObject->pay_url)) {
+				$this->SetPayUrl($oObject->pay_url);
+			}
+			if(isset($oObject->order_id)) {
+				$this->SetOrderId($oObject->order_id);
+			}
+			if(isset($oObject->order_number)) {
+				$this->SetOrderNumber($oObject->order_number);
+			}
+			if(isset($oObject->method)) {
+				$this->SetMethod($oObject->method);
+			}
+			if(isset($oObject->issuer)) {
+				$this->SetIssuer($oObject->issuer);
+			}
+			if(isset($oObject->date_of_birth)) {
+				$this->SetDateofbirth($oObject->date_of_birth);
+			}
 
-			if(empty($oObject->created)) {
-				$this->SetCreated(gmdate('r', time()));
-			} else {
+			$this->billing_address  = new \AppConnector\Entities\Transaction\Address($oObject->billing_address);
+			$this->shipping_address = new \AppConnector\Entities\Transaction\Address($oObject->shipping_address);
+
+			/** Defaults */
+			$this->SetCreated(gmdate('c', time()));
+			$this->SetStatus('OPEN');
+			$this->SetTransactionId(uniqid());
+
+			if(!empty($oObject->created)) {
 				$this->SetCreated($oObject->created);
 			}
 
-			if(empty($oObject->status)) {
-				$this->SetStatus('OPEN');
-			} else {
+			if(!empty($oObject->status)) {
 				$this->SetStatus($oObject->status);
 			}
 
-			if(empty($oObject->transaction_id)) {
-				$this->SetTransactionId(uniqid());
-			} else {
+			if(!empty($oObject->transaction_id)) {
 				$this->SetTransactionId($oObject->transaction_id);
 			}
 		}
@@ -75,21 +112,53 @@
 		 * @return array
 		 */
 		public function ToArray() {
-			return ['amount'         => $this->amount,
-					'currency'       => $this->currency,
-					'status'         => $this->status,
-					'order_id'       => $this->order_id,
-					'order_number'   => $this->order_number,
-					'language'       => $this->language,
-					'method'         => $this->method,
-					'issuer'         => $this->issuer,
-					'returnUrl'      => $this->returnUrl,
-					'payUrl'         => $this->payUrl,
-					'transaction_id' => $this->transaction_id,
-					'created'        => $this->created,
-					'birthdate'        => $this->birthdate,
+			return ['amount'           => $this->GetAmount(),
+					'currency'         => $this->GetCurrency(),
+					'status'           => $this->GetStatus(),
+					'order_id'         => $this->GetOrderId(),
+					'order_number'     => $this->GetOrderNumber(),
+					'language'         => $this->GetLanguage(),
+					'method'           => $this->GetMethod(),
+					'issuer'           => $this->GetIssuer(),
+					'return_url'       => $this->GetReturnUrl(),
+					'webhook_url'      => $this->GetWebhookUrl(),
+					'pay_url'          => $this->GetPayUrl(),
+					'transaction_id'   => $this->GetTransactionId(),
+					'billing_address'  => (array) $this->GetBillingAddress(),
+					'shipping_address' => (array) $this->GetShippingAddress(),
+					'created'          => $this->GetCreated(),
+					'date_of_birth'    => $this->GetDateofbirth(),
+					'error'            => $this->GetError(),
 
 			];
+		}
+
+		/**
+		 * @return \stdClass
+		 */
+		public function toStdClass() {
+			$oObject                 = new \stdClass();
+			$oObject->status         = $this->GetStatus();
+			$oObject->pay_url        = $this->GetPayUrl();
+			$oObject->transaction_id = $this->GetTransactionId();
+			$oObject->error          = $this->GetError();
+			$oObject->amount         = $this->GetAmount();
+			$oObject->currency       = $this->GetCurrency();
+			$oObject->return_url     = $this->GetReturnUrl();
+			$oObject->webhook_url    = $this->GetWebhookUrl();
+			$oObject->method         = $this->GetMethod();
+			$oObject->order_id       = $this->GetOrderId();
+			$oObject->order_number   = $this->GetOrderNumber();
+			$oObject->language       = $this->GetLanguage();
+			$oObject->issuer         = $this->GetIssuer();
+
+			$oObject->billing_address  = $this->GetBillingAddress()->toStdClass();
+			$oObject->shipping_address = $this->GetShippingAddress()->toStdClass();
+
+			$oObject->created       = $this->GetCreated();
+			$oObject->date_of_birth = $this->GetDateofbirth();
+
+			return $oObject;
 		}
 
 		/**
@@ -118,6 +187,30 @@
 		 */
 		public function GetStatus() {
 			return $this->status;
+		}
+
+		/**
+		 * @return null|string
+		 */
+		public function GetError() {
+			if(empty($this->error)) {
+				switch($this->GetStatus()) {
+					case 'CANCELLED':
+						$this->error = 'The transaction is cancelled by the customer.';
+						break;
+					case 'FAILED':
+						$this->error = 'A general error that the transaction can\'t be processed correctly';
+						break;
+					case 'EXPIRED':
+						$this->error =
+							'The transaction is expired which can happen if remote services such as iDEAL or PayPal expire the transaction on their side.';
+						break;
+					case 'OPEN':
+					case 'SUCCESS':
+						break;
+				}
+			}
+			return $this->error;
 		}
 
 		/**
@@ -159,45 +252,67 @@
 		 * @return string
 		 */
 		public function GetReturnUrl() {
-			return $this->returnUrl;
+			return $this->return_url;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function GetWebhookUrl() {
+			return $this->webhook_url;
 		}
 
 		/**
 		 * @return string
 		 */
 		public function GetPayUrl() {
-			return $this->payUrl;
+			return $this->pay_url;
 		}
 
 		/**
 		 * @return int
 		 */
 		public function GetCreated() {
-			return $this->created;
+			$sTimeStamp = str_replace('+00:00', 'Z', $this->created);
+			return $sTimeStamp;
+		}
+
+		/**
+		 * @return \AppConnector\Entities\Transaction\Address
+		 */
+		public function GetBillingAddress() {
+			return $this->billing_address;
+		}
+
+		/**
+		 * @return \AppConnector\Entities\Transaction\Address
+		 */
+		public function GetShippingAddress() {
+			return $this->shipping_address;
 		}
 
 		/**
 		 * @return string
 		 */
-		public function GetBirthdate() {
-			return $this->birthdate;
+		public function GetDateofbirth() {
+			return $this->date_of_birth;
 		}
 
 		public function GetAge() {
-			$oBirthDate = new \DateTime($this->birthdate);
-			$oNow       = new \DateTime();
-			$iAge       = $oBirthDate->diff($oNow)->format('%y');
+			$oDateOfBirth = new \DateTime($this->date_of_birth);
+			$oNow         = new \DateTime();
+			$iAge         = $oDateOfBirth->diff($oNow)->format('%y');
 
 			return $iAge;
 		}
 
 		/**
-		 * @param string $birthdate
+		 * @param string $date_of_birth
 		 *
 		 * @return Transaction
 		 */
-		public function SetBirthdate($birthdate) {
-			$this->birthdate = $birthdate;
+		public function SetDateofbirth($date_of_birth) {
+			$this->date_of_birth = $date_of_birth;
 			return $this;
 		}
 
@@ -282,22 +397,32 @@
 		}
 
 		/**
-		 * @param string $returnUrl
+		 * @param string $return_url
 		 *
 		 * @return Transaction
 		 */
-		public function SetReturnUrl($returnUrl) {
-			$this->returnUrl = $returnUrl;
+		public function SetReturnUrl($return_url) {
+			$this->return_url = $return_url;
 			return $this;
 		}
 
 		/**
-		 * @param string $payUrl
+		 * @param string $webhook_url
 		 *
 		 * @return Transaction
 		 */
-		public function SetPayUrl($payUrl) {
-			$this->payUrl = $payUrl;
+		public function SetWebhookUrl($webhook_url) {
+			$this->webhook_url = $webhook_url;
+			return $this;
+		}
+
+		/**
+		 * @param string $pay_url
+		 *
+		 * @return Transaction
+		 */
+		public function SetPayUrl($pay_url) {
+			$this->pay_url = $pay_url;
 			return $this;
 		}
 
@@ -320,5 +445,37 @@
 			$this->created = $created;
 			return $this;
 		}
+
+		/**
+		 * @param \AppConnector\Entities\Transaction\Address $billing_address
+		 *
+		 * @return Transaction
+		 */
+		public function SetBillingAddress($billing_address) {
+			$this->billing_address = $billing_address;
+			return $this;
+		}
+
+		/**
+		 * @param \AppConnector\Entities\Transaction\Address $shipping_address
+		 *
+		 * @return Transaction
+		 */
+		public function SetShippingAddress($shipping_address) {
+			$this->shipping_address = $shipping_address;
+			return $this;
+		}
+
+		/**
+		 * @param null|string $error
+		 *
+		 * @return Transaction
+		 */
+		public function SetError($error) {
+			$this->error = $error;
+			return $this;
+		}
+
+
 
 	}

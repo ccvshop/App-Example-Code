@@ -7,6 +7,7 @@
 	require_once('../../Entities/Credential.php');
 	require_once('../../Entities/WebHook.php');
 	require_once('../../Entities/Transaction.php');
+	require_once('../../Entities/Transaction/Address.php');
 	require_once('../../Exceptions/InvalidApiResponse.php');
 	require_once('../../Exceptions/InvalidCredentialException.php');
 	require_once('../../Exceptions/InvalidHashException.php');
@@ -61,7 +62,10 @@
 			</p>
 			<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->GetTransactionId(); ?>" method="post">
 				<button name="status" value="SUCCESS" class="btn btn-success">Success</button>
-				<button name="status" value="CANCEL" class="btn btn-danger">Cancel</button>
+				<button name="status" value="CANCELLED" class="btn btn-danger">Cancel</button>
+				<button name="status" value="FAILED" class="btn btn-danger">Failed</button>
+				<button name="status" value="EXPIRED" class="btn btn-danger">Expired</button>
+				<button name="status" value="OPEN" class="btn btn-warning">Open</button>
 			</form>
 		</div>
 	</div>

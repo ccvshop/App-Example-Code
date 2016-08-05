@@ -105,6 +105,7 @@
 			$rFile = static::OpenFileToRead();
 			while(($sLine = fgets($rFile)) !== false) {
 				$oObject = new Transaction(JsonSerializer::DeSerialize($sLine));
+
 				if($oObject->GetTransactionId() === $sTransactionId) {
 					Log::Write('Data_Credential::GetOneByPublicKey', 'INPUT', 'Row found for ' . $sTransactionId);
 					return $oObject;
