@@ -318,7 +318,7 @@
 
 			#Marking app as 'installed'
 			$oAppPSP           = new \stdClass();
-			$oAppPSP->name     = 'Custom App PSP';
+			$oAppPSP->name     = 'Smoke & Mirrors PSP';
 			$oAppPSP->endpoint = 'https://ameijer-app-psp.ccvdev.nl/';
 			$oAppPSP->paymethods =  json_decode(file_get_contents('PSP/Paymethods.json'));
 
