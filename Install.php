@@ -177,7 +177,7 @@
 
 				<p>The following paymethods will become available in your webshop.</p>
 				<?php
-					foreach(json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/PSP/Paymethods.json')) as $oPaymethod) {
+					foreach(json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/Examples/PSP/Paymethods.json')) as $oPaymethod) {
 						echo '<span style="display: inline-block; width: 75px;">';
 						echo '<img src="' . $oPaymethod->icon . '" /> ';
 						echo '</span>';
