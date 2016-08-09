@@ -16,6 +16,10 @@
 		/**
 		 * This is the field in the header of each request that contains the hash. Do NOT change this unless instructed by CCV.
 		 */
+		const Header_Public = 'x-public';
+		/**
+		 * This is the field in the header of each request that contains the hash. Do NOT change this unless instructed by CCV.
+		 */
 		const Header_Hash = 'x-hash';
 
 		/**
@@ -29,10 +33,24 @@
 		const Hash_Field_Separator = '|';
 
 		/**
+		 * Public key to valid with. Normally this is the App Secret Key, but could be the API credential Secret.
+		 * @var null|string
+		 */
+		protected $sSecretKey = null;
+
+		/**
 		 * Collection of data to be hashed.
 		 * @var array
 		 */
 		protected $aDataToHash = [];
+
+		public function __construct($sSecretKey = null) {
+			if(is_null($sSecretKey)){
+				$this->sSecretKey = Config::AppSecretKey;
+			} else {
+				$this->sSecretKey = $sSecretKey;
+			}
+		}
 
 		public function AddData($sData) {
 			if(is_string($sData)) {
@@ -47,7 +65,7 @@
 		 */
 		public function Hash() {
 			$sStringToHash = implode($this::Hash_Field_Separator, $this->aDataToHash);
-			$sHash         = hash_hmac($this::Hash_Encryption, $sStringToHash, Config::AppSecretKey);
+			$sHash         = hash_hmac($this::Hash_Encryption, $sStringToHash, $this->sSecretKey);
 
 			Log::Write('Hash::Hash', 'DATA', $sStringToHash);
 			Log::Write('Hash::Hash', 'GENERATE', $sHash);

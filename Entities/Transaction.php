@@ -10,6 +10,9 @@
 	 */
 	class Transaction {
 		/** @var  int */
+		protected $customer_id;
+
+		/** @var  int */
 		protected $amount;
 		/** @var  string */
 		protected $currency;
@@ -52,6 +55,10 @@
 		protected $error = null;
 
 		public function __construct(\stdClass $oObject) {
+			if(isset($oObject->customer_id)) {
+				$this->SetCustomerId($oObject->customer_id);
+			}
+
 			if(isset($oObject->amount)) {
 				$this->SetAmount($oObject->amount);
 			}
@@ -112,7 +119,8 @@
 		 * @return array
 		 */
 		public function ToArray() {
-			return ['amount'           => $this->GetAmount(),
+			return ['customer_id'      => $this->GetCustomerId(),
+					'amount'           => $this->GetAmount(),
 					'currency'         => $this->GetCurrency(),
 					'status'           => $this->GetStatus(),
 					'order_id'         => $this->GetOrderId(),
@@ -476,6 +484,21 @@
 			return $this;
 		}
 
+		/**
+		 * @return int
+		 */
+		public function GetCustomerId() {
+			return $this->customer_id;
+		}
 
+		/**
+		 * @param int $customer_id
+		 *
+		 * @return Transaction
+		 */
+		public function SetCustomerId($customer_id) {
+			$this->customer_id = $customer_id;
+			return $this;
+		}
 
 	}
