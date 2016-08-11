@@ -167,6 +167,29 @@
 			</div>
 		</div>
 
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Interactive App Code block installation - Ranking the product
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>This will install the app and create one code block. This example enhance the productmananagement by showing more information about a product from a 3rth party.</p>
+
+				<form action="Install.php" method="post">
+					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+					<input type="hidden" name="install_type" id="install_type" value="ranking_the_product_service"/>
+
+					<label for="customer_id">Customer Id</label>
+					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+
+					<button name="Cancel" class="btn">Cancel</button>
+					<button name="Install" class="btn btn-success">Install</button>
+				</form>
+			</div>
+		</div>
+
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title">

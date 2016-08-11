@@ -1,0 +1,22 @@
+{
+  "views": [
+    {
+      "name": "onload",
+      "endpoint": "https://demo.securearea.eu/Examples/RankingTheProduct/Endpoint.php",
+      "elements": [
+        {
+          "label": "",
+          "name": "intro",
+          "element_type": "text",
+          "value": ""
+        },
+        {
+          "label": "",
+          "name":"result",
+          "element_type": "text",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}
