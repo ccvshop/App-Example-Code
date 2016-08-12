@@ -319,6 +319,7 @@
 			#Marking app as 'installed'
 			$oAppPSP           = new \stdClass();
 			$oAppPSP->name     = 'Smoke & Mirrors PSP';
+			$oAppPSP->description   = 'Smoke & Mirrors PSP is installed via the App Store.';
 			$oAppPSP->endpoint = Config::AppUri;
 			$oAppPSP->paymethods =  json_decode(file_get_contents('Examples/PSP/Paymethods.json'));
 
