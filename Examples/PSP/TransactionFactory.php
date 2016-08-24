@@ -16,7 +16,7 @@
 			$this->VerifyHash();
 
 			$oTransaction = \AppConnector\Data\Data_Transaction::GetOneByTransactionId($sTransactionId);
-			if($oTransaction->GetCustomerId() !== $this->oCredential->GetCustomerId()){
+			if($oTransaction->GetCustomerId() !== $this->oCredential->GetCustomerId()) {
 				throw new InvalidTransactionId();
 			}
 
@@ -93,7 +93,7 @@
 		protected function DoCreditCheck(\AppConnector\Entities\Transaction &$oTransaction) {
 			switch($oTransaction->GetMethod()) {
 				case 'afterpay':
-
+					\AppConnector\Log\Log::Write('TransactionFactory', 'DO_CREDIT_CHECK', 'Age is ' . $oTransaction->GetAge());
 					if($oTransaction->GetAge() >= 18) {
 						$oTransaction->SetStatus('SUCCESS');
 					} else {
