@@ -1,6 +1,7 @@
 <?php
 	namespace AppConnector;
 
+	use AppConnector\Data\Data_Credential;
 	use AppConnector\Exceptions\InvalidHashException;
 	use AppConnector\Http\Hash;
 	use AppConnector\Log\Log;
@@ -16,33 +17,37 @@
 		Log::Write('Endpoint', 'INPUT_BODY', $sIncomingData);
 
 		#Validate if the data we received is correct and authenticated.
-		$oIncomingHash = new Hash();
-		$bValid        = $oIncomingHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])
-							->AddData($sIncomingData)
-							->IsValid($aRequestHeaders[Hash::Header_Hash]);
+		$sApiPublic      = $aRequestHeaders[\AppConnector\Http\Hash::Header_Public];
+		$oCredential     = Data_Credential::GetOneByPublicKey($sApiPublic);
+
+		#Validate if the data we received is correct and authenticated.
+		$oIncomingHash = new \AppConnector\Http\Hash($oCredential->GetApiSecret());
+		$bValid        =
+			$oIncomingHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])->AddData($sIncomingData)->IsValid($aRequestHeaders[Hash::Header_Hash]);
 
 		if($bValid === false) {
 			throw new InvalidHashException();
 		}
 
-		$oObject = json_decode($sIncomingData);
-		$oObject = $oObject->payload;
-		$aRank["ProductName"] = (!empty($oObject->name));
-		$aRank["SeoAlias"] = (!empty($oObject->alias ));
-		$aRank["MetaTitle"] = (!empty($oObject->page_title ));
+		$oObject                  = json_decode($sIncomingData);
+		$oObject                  = $oObject->payload;
+		$aRank["ProductName"]     = (!empty($oObject->name));
+		$aRank["SeoAlias"]        = (!empty($oObject->alias));
+		$aRank["MetaTitle"]       = (!empty($oObject->page_title));
 		$aRank["MetaDescription"] = (!empty($oObject->meta_description));
-		$aRank["MetaKeywords"] = (!empty($oObject->meta_keywords));
-		$aRank["Price"] = (!empty($oObject->price ));
-		$aRank["Brand"] = (isset($oObject->brand->id));
-		$aRank["EANNummer"] = (!empty($oObject->eannumber));
-		$aRank["Description"] = (!empty($oObject->shortdescription));
-		$aRank["Stock"] = (!empty($oObject->stock));
+		$aRank["MetaKeywords"]    = (!empty($oObject->meta_keywords));
+		$aRank["Price"]           = (!empty($oObject->price));
+		$aRank["Brand"]           = (isset($oObject->brand->id));
+		$aRank["EANNummer"]       = (!empty($oObject->eannumber));
+		$aRank["Description"]     = (!empty($oObject->shortdescription));
+		$aRank["Stock"]           = (!empty($oObject->stock));
 
 		#Show inital start form.
-		$oResponse       = new \stdClass();
-		$oResponse->view = 'onload';
-		$oResponse->data = [];
-		$oResponse->data['intro'] = 'Ranking the product service gives you a ranking of your product to analyze data used by search engines, the higher the score the better the product';
+		$oResponse                 = new \stdClass();
+		$oResponse->view           = 'onload';
+		$oResponse->data           = [];
+		$oResponse->data['intro']  =
+			'Ranking the product service gives you a ranking of your product to analyze data used by search engines, the higher the score the better the product';
 		$oResponse->data['result'] = '
 			<strong>Productnaam:</strong>&nbsp; ' . ($aRank["ProductName"] ? "Ja" : "Nee") . '<br />
 			<strong>SEO Alias:</strong>&nbsp;' . ($aRank["SeoAlias"] ? "Ja" : "Nee") . '<br />
@@ -57,13 +62,11 @@
 		';
 
 		$sResponse = json_encode($oResponse);
-		Log::Write('Endpoint', 'OUTPUT_BODY',$sResponse);
+		Log::Write('Endpoint', 'OUTPUT_BODY', $sResponse);
 
 		#Generate output hash, so the webshop can verify it's integrity and authenticate it.
-		$oHash = new Hash();
-		$sHash = $oHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])
-					->AddData($sResponse)
-					->Hash();
+		$oHash = new \AppConnector\Http\Hash($oCredential->GetApiSecret());
+		$sHash = $oHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])->AddData($sResponse)->Hash();
 
 		header('HTTP/1.1 200 OK', true, 200);
 		header('x-hash: ' . $sHash);
@@ -73,7 +76,6 @@
 		#Returns data to the webshop.
 		echo $sResponse;
 		die();
-
 	} catch(\Exception $oEx) {
 
 		Log::Write('Endpoint', 'ERROR', 'HTTP/1.1 500 Internal Server Error. ' . $oEx->getMessage());

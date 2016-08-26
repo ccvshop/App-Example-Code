@@ -1,6 +1,7 @@
 <?php
 	namespace AppConnector;
 
+	use AppConnector\Data\Data_Credential;
 	use AppConnector\Exceptions\InvalidHashException;
 	use AppConnector\Http\Hash;
 	use AppConnector\Log\Log;
@@ -9,14 +10,18 @@
 		require_once('../../Config.php');
 		require_once('../../AppConnector.php');
 
-		$aRequestHeaders = apache_request_headers();
+			$aRequestHeaders = apache_request_headers();
 		$sIncomingData   = @file_get_contents('php://input');
 
 		Log::WriteStartCall(__FILE__);
 		Log::Write('Endpoint', 'INPUT_BODY', $sIncomingData);
 
 		#Validate if the data we received is correct and authenticated.
-		$oIncomingHash = new Hash();
+		$sApiPublic      = $aRequestHeaders[\AppConnector\Http\Hash::Header_Public];
+		$oCredential     = Data_Credential::GetOneByPublicKey($sApiPublic);
+
+		#Validate if the data we received is correct and authenticated.
+		$oIncomingHash = new \AppConnector\Http\Hash($oCredential->GetApiSecret());
 		$bValid        = $oIncomingHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])
 							->AddData($sIncomingData)
 							->IsValid($aRequestHeaders[Hash::Header_Hash]);
@@ -54,7 +59,7 @@
 		Log::Write('Endpoint', 'OUTPUT_BODY',$sResponse);
 
 		#Generate output hash, so the webshop can verify it's integrity and authenticate it.
-		$oHash = new Hash();
+		$oHash = new \AppConnector\Http\Hash($oCredential->GetApiSecret());
 		$sHash = $oHash->AddData(Config::AppUri . $_SERVER['REQUEST_URI'])
 					->AddData($sResponse)
 					->Hash();
