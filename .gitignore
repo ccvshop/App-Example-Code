@@ -6,7 +6,7 @@
 #Application specific, CCV Shop B.V.
 Data/data.*
 Log/*.log
-Config.php
+/Config.php
 
 #macfiles
 *.DS_Store
