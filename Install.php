@@ -11,7 +11,6 @@
 
 	use AppConnector\Log\Log;
 
-
 	require_once('AppConnector.php');
 
 	/**
@@ -43,7 +42,8 @@
 
 		<p>
 			This is a simulation tool for different kinds of apps. All apps use the same installation principle, but the effect it will have in the webshop
-			differs. The purpose of this tool is to demo the options and possibilities you could use when developing an app. The customer id is for demo purposes only.
+			differs. The purpose of this tool is to demo the options and possibilities you could use when developing an app. The customer id is for demo
+			purposes only.
 		</p>
 
 
@@ -146,17 +146,17 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">
-					Interactive App Code block installation - Drone Delivery Service
+					Interactive App Code block installation - Ranking the product
 				</h3>
 			</div>
 			<div class="panel-body">
 
-				<p>This will install the app after creating two App Code blocks that interact with each other. In this example a Drone Delivery service is installed. In the
-					order management on the tab 'Connections' the merchant can choose different options for delivery. Delivery information can be updated per user. This codeblock is installed in the user edit form under 'My customers'.</p>
+				<p>This will install the app and create one code block. This example enhance the productmananagement by showing more information about a product
+				   from a 3rth party.</p>
 
 				<form action="Install.php" method="post">
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
-					<input type="hidden" name="install_type" id="install_type" value="dronedelivery_service"/>
+					<input type="hidden" name="install_type" id="install_type" value="ranking_the_product_service"/>
 
 					<label for="customer_id">Customer Id (for test purpose only)</label>
 					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
@@ -223,7 +223,6 @@
 			#Installing App
 			$oAppConnector = new AppConnector();
 			$oAppConnector->Install();
-
 
 			Log::Write('Install', 'OUTPUT', 'Location: ' . $oAppConnector->GetCredential()->GetReturnUrl());
 			Log::WriteEndCall(__FILE__);

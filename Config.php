@@ -13,6 +13,7 @@
 		/**
 		 * This is the base of the app URI.
 		 * This Uri is used in the update schema example
+		 * Note: Remove possible trailing slashes.
 		 */
 		const AppUri = 'https://ameijer-app-psp.ccvdev.nl';
 
@@ -49,24 +50,24 @@
 		 * If CredentialStorageType is SQL setup the databasehost for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseHost = 'localhost';
+		const DatabaseHost = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasename for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseName = 'biedmeer_system';
+		const DatabaseName = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databaseuser for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseUsername = 'biedmeer_system';
+		const DatabaseUsername = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasepassword for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabasePassword = 'bied1960';
+		const DatabasePassword = '';
 
 	}

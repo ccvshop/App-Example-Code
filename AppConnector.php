@@ -42,8 +42,8 @@
 	 *          1.1        - Added logging
 	 *          1.2        - Added construct check on config costants
 	 *          1.3        - Added additional examples for interactive code blocks
-	 *            1.4        - Nick Postma: demo.securearea.eu replacement with config data
-	 *            1.5        - Nick Postma: Added Drone delivery service example
+	 *          1.4        - Nick Postma: demo.securearea.eu replacement with config data
+	 *          1.5        - Thijs Bekke: Example of RankingTheProducts
 	 */
 	class AppConnector {
 		/**
@@ -112,8 +112,8 @@
 				case 'postal_service':
 					$this->Install_PostalService();
 					break;
-				case 'dronedelivery_service':
-					$this->Install_DronedeliveryService();
+				case 'ranking_the_product_service':
+					$this->Install_RankingTheProduct();
 					break;
 				case 'app_psp':
 					$this->Install_AppPSP();
@@ -239,13 +239,8 @@
 			$oWebRequest->Post();
 		}
 
-		/**
-		 * Installs the Drone Delivery Service track and trace. A merchant can update track and trace information in his order management and user edit form.
-		 *
-		 * @throws \AppConnector\Exceptions\InvalidApiResponse
-		 * @throws \AppConnector\Exceptions\InvalidJsonException
-		 */
-		protected function Install_DronedeliveryService() {
+
+		protected function Install_RankingTheProduct() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
@@ -267,33 +262,22 @@
 				}
 			}
 
-			#Creating new codeblock for the option service.
-			$sData = file_get_contents('Examples/Dronedelivery/AppCodeBlockOrder.json');
+
+			#Creating new codeblock for the send service.
+			$sData = file_get_contents('Examples/RankingTheProduct/AppCodeBlock.json');
+
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
 			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
 
 			$oCodeBlock                      = new \stdClass();
-			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
+			$oCodeBlock->placeholder         = 'backend-show_product-meta_data';
 			$oCodeBlock->interactive_content = json_decode($sData);
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);
 			$oWebRequest->Post();
 
-			#Creating new codeblock for the edit service.
-			$sData = file_get_contents('Examples/Dronedelivery/AppCodeBlockUser.json');
-
-			#Replace demo.securearea.eu for config setting if default scheme is used
-			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
-
-			$oCodeBlock                      = new \stdClass();
-			$oCodeBlock->placeholder         = 'backend-login_users-edit_user';
-			$oCodeBlock->interactive_content = json_decode($sData);
-
-			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
-			$oWebRequest->SetData($oCodeBlock);
-			$oWebRequest->Post();
 		}
 
 		protected function Install_AppPSP() {

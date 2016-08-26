@@ -51,7 +51,6 @@
 			if(is_null(static::DataFile)) {
 				throw new \Exception('Data class needs constant DataFile');
 			}
-
 			return $_SERVER['DOCUMENT_ROOT'].'/'.static::DataFile;
 		}
 	}
