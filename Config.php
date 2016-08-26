@@ -15,7 +15,7 @@
 		 * This Uri is used in the update schema example
 		 * Note: Remove possible trailing slashes.
 		 */
-		const AppUri = 'https://ameijer-app.ccvdev.nl';
+		const AppUri = '';
 
 		/**
 		 * This contains a secret key which is unique for this App.
@@ -23,21 +23,21 @@
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 * This key is used in the AppConnector.php
 		 */
-		const AppSecretKey = '63vyl94ceu48yfdbqxjwi5dp39ko6mo2';
+		const AppSecretKey = '';
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/Handshake.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppHandshakeUri = 'https://ameijer-app.ccvdev.nl/Handshake.php';
+		const AppHandshakeUri = '';
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/UnInstall.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppUninstallUri = 'https://ameijer-app.ccvdev.nl/UnInstall.php';
+		const AppUninstallUri = '';
 
 		/**
 		 * Default setting for storing credentials.
@@ -50,24 +50,24 @@
 		 * If CredentialStorageType is SQL setup the databasehost for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseHost = 'localhost';
+		const DatabaseHost = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasename for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseName = 'biedmeer_system';
+		const DatabaseName = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databaseuser for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseUsername = 'biedmeer_system';
+		const DatabaseUsername = '';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasepassword for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabasePassword = 'bied1960';
+		const DatabasePassword = '';
 
 	}
