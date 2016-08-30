@@ -1,0 +1,23 @@
+### PhpStorm ###
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
+
+*.iml
+
+#Application specific, CCV Shop B.V.
+Data/data.*
+Log/*.log
+/Config.php
+
+#macfiles
+*.DS_Store
+**/.DS_Store
+._*
+
+#Linux editor Files
+#JOE
+DEADJOE
+*~
+
+## Directory-based project format:
+.idea/
+

@@ -1,0 +1,113 @@
+{
+	"views": [
+		{
+			"name":     "onload",
+			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "",
+					"element_type": "text",
+					"value":        "Bacon Ipsum"
+				},
+				{
+					"name":         "type_bacon_text",
+					"label":        "Input field",
+					"element_type": "input_text"
+				},
+				{
+					"name":         "type_bacon_textarea",
+					"label":        "TextArea field",
+					"element_type": "input_textarea"
+				},
+				{
+					"name":         "format_select",
+					"label":        "Cool stuff?",
+					"element_type": "input_select",
+					"options":      [
+						{
+							"label": "Yes!",
+							"value": "1"
+						},
+						{
+							"label":    "Nope!",
+							"value":    "0",
+							"selected": true
+						}
+					]
+				},
+				{
+					"name":         "format_radio",
+					"label":        "Coole dingen?",
+					"element_type": "input_radio",
+					"options":      [
+						{
+							"label": "Yes!",
+							"value": "1"
+						},
+						{
+							"label":    "Nope!",
+							"value":    "0",
+							"selected": true
+						}
+					]
+				},
+				{
+					"name":         "format_checkout",
+					"label":        "Cool stuff?",
+					"element_type": "input_checkbox",
+					"value":        "1"
+				},
+				{
+					"name":         "invoice",
+					"label":        "Invoice deeplink",
+					"element_type": "attachment",
+					"icon":         "fa-file-pdf-o"
+				},
+				{
+					"name":         "invoice-2",
+					"label":        "Invoice deeplink 2",
+					"element_type": "attachment",
+					"icon":         "fa-file-pdf-o"
+				},
+				{
+					"name":         "download",
+					"label":        "Download",
+					"element_type": "download",
+					"icon":         "fa-file-pdf-o",
+					"value":        "https:\/\/ameijer-app.ccvdev.nl\/Examples/SendService/specimen_label.png"
+				},
+				{
+					"name":         "submit",
+					"label":        "Send",
+					"value":        "send",
+					"element_type": "input_button",
+					"icon":         "fa-share"
+				}
+			]
+		},
+		{
+			"name":     "success",
+			"endpoint": "https://ameijer-app.ccvdev.nl/Examples/SendService/Endpoint.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "Result",
+					"element_type": "text"
+				},
+				{
+					"name":         "label-1",
+					"label":        "Package label",
+					"element_type": "attachment",
+					"icon":         "fa-file-pdf-o"
+				},
+				{
+					"name":         "submit",
+					"label":        "Back",
+					"value":        "back",
+					"element_type": "input_button"
+				}
+			]
+		}
+	]
+}

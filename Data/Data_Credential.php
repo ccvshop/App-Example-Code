@@ -1,23 +1,43 @@
 <?
 	namespace AppConnector\Data;
 
+	use AppConnector\Config;
 	use AppConnector\Entities\Credential;
 	use AppConnector\Exceptions\InvalidCredentialException;
-	use AppConnector\Json\JsonSerializer;
-	use AppConnector\Log\Log;
+
+	require_once('IData_Credential.php');
+	require_once('Data_Credential_SQL.php');
+	require_once('Data_Credential_JSON.php');
 
 	/**
 	 * Class Data_Credential
-	 * Handles all data manipulations for Credentials
+	 * Concrete class for all data manipulations for Credentials
 	 *
 	 * @package AppConnector\Data
-	 * @author  Adriaan Meijer
-	 * @date    2014-10-13
+	 * @author  Nick Postma
+	 * @date    2016-06-14
 	 * @version 1.0    - First draft
-	 *          1.1    - Added logging
+	 *
 	 */
-	class Data_Credential extends Data_Core {
-		const DataFile = 'Data/data.credential.txt';
+	class Data_Credential {
+
+		/**
+		 * @static
+		 *
+		 * @return IData_Credential
+		 * @throws \Exception
+		 */
+		protected static function GetHandlerClassname() {
+			$sDataCrentialClass = "AppConnector\Data\Data_Credential_" . Config::CredentialStorageType;
+
+			if(!class_exists($sDataCrentialClass)) {
+				throw new \Exception('Could not determine the credential handler (' .
+									 $sDataCrentialClass .
+									 '). Please check CredentialStorageType in the config class');
+			}
+
+			return $sDataCrentialClass;
+		}
 
 		/**
 		 * Inserts 1 row containing a Credential into the data file
@@ -27,22 +47,12 @@
 		 * @param Credential $oCredential
 		 *
 		 * @return bool
+		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 * @throws \Exception
 		 */
 		static public function Insert(Credential $oCredential) {
-			$oData              = new \stdClass();
-			$oData->create_date = date('Y-m-d H:i:s');
-			$oData->api_public  = $oCredential->GetApiPublic();
-			$oData->api_secret  = $oCredential->GetApiSecret();
-			$oData->api_root    = $oCredential->GetApiRoot();
-			$oData->return_url  = $oCredential->GetReturnUrl();
-			$oData->customer_id = null;
-
-			#@todo: check up dubbele public keys
-
-			fwrite(static::OpenFileToWrite(), JsonSerializer::Serialize($oData) . "\r\n");
-
-			Log::Write('Data_Credential::Insert', 'INPUT', 'Row written on ' . $oCredential->GetApiPublic());
-			return true;
+			$sDataCrentialClass = static::GetHandlerClassname();
+			return $sDataCrentialClass::Insert($oCredential);
 		}
 
 		/**
@@ -50,52 +60,28 @@
 		 *
 		 * @static
 		 *
-		 * @param Credential $oCredential
+		 * @param \AppConnector\Entities\Credential $oCredential
+		 *
+		 * @return bool
+		 * @throws \Exception
 		 */
 		static public function Update(Credential $oCredential) {
-			$rFile = static::OpenFileToRead();
-			$aData = array();
-			while(($sLine = fgets($rFile)) !== false) {
-				$oData = JsonSerializer::DeSerialize($sLine);
-				if($oData->api_public === $oCredential->GetApiPublic()) {
-					$oData->customer_id = $oCredential->GetCustomerId();
-				}
-
-				$aData[] = JsonSerializer::Serialize($oData);
-			}
-			#Write empty line at file end
-			$aData[] = null;
-
-			file_put_contents(static::DataFile, implode("\r\n", $aData));
-			Log::Write('Data_Credential::Update', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
+			$sDataCrentialClass = static::GetHandlerClassname();
+			return $sDataCrentialClass::Update($oCredential);
 		}
 
 		/**
 		 * Deletes 1 row containing a WebHook based on the Public Key
-		 *
 		 * @static
 		 *
-		 * @param Credential $oCredential
+		 * @param \AppConnector\Entities\Credential $oCredential
+		 *
+		 * @return bool
+		 * @throws \Exception
 		 */
 		static public function Delete(Credential $oCredential) {
-			$rFile = static::OpenFileToRead();
-			$aData = array();
-
-			while(($sLine = fgets($rFile)) !== false) {
-				$oObject = new Credential(JsonSerializer::DeSerialize($sLine));
-				if($oObject->GetApiPublic() !== $oCredential->GetApiPublic()) {
-					$sLine = str_replace(array("\n", "\r"), '', $sLine);
-					$sLine = trim($sLine);
-					if(!empty($sLine)) {
-						$aData[] = $sLine;
-					}
-				}
-			}
-			#Write empty line at file end
-			$aData[] = null;
-
-			file_put_contents(static::DataFile, implode("\r\n", $aData));
-			Log::Write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
+			$sDataCrentialClass = static::GetHandlerClassname();
+			return $sDataCrentialClass::Delete($oCredential);
 		}
 
 		/**
@@ -107,17 +93,25 @@
 		 *
 		 * @return Credential
 		 * @throws InvalidCredentialException
-		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 * @throws \Exception
 		 */
 		static public function GetOneByPublicKey($sApiPublic = '') {
-			$rFile = static::OpenFileToRead();
-			while(($sLine = fgets($rFile)) !== false) {
-				$oObject = new Credential(JsonSerializer::DeSerialize($sLine));
-				if($oObject->GetApiPublic() === $sApiPublic) {
-					Log::Write('Data_Credential::GetOneByPublicKey', 'INPUT', 'Row found for ' . $sApiPublic);
-					return $oObject;
-				}
-			}
-			throw new InvalidCredentialException();
+			$sDataCrentialClass = static::GetHandlerClassname();
+			return $sDataCrentialClass::GetOneByPublicKey($sApiPublic);
 		}
+
+		/**
+		 * Return all Credentials
+		 *
+		 * @static
+		 *
+		 * @return Credential
+		 * @throws InvalidCredentialException
+		 * @throws \Exception
+		 */
+		static public function GetAll() {
+			$sDataCrentialClass = static::GetHandlerClassname();
+			return $sDataCrentialClass::GetAll();
+		}
+
 	}

@@ -32,7 +32,9 @@
 		private $Key = '';
 
 		public function __construct(\stdClass $oObject) {
-			$this->SetCustomerId($oObject->customer_id);
+			if(isset($oObject->customer_id)){
+				$this->SetCustomerId($oObject->customer_id);
+			}
 			$this->SetId($oObject->id);
 			$this->SetEvent($oObject->event);
 			$this->SetAddress($oObject->address);

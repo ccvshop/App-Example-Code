@@ -1,0 +1,117 @@
+{
+	"views": [
+		{
+			"name":     "onload",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
+			"elements": [
+				{
+					"name":         "intro_line1",
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "<img src=\"https://demo.securearea.eu/Examples/PostalService/icon_thumb.png\" class=\"pull-left\">With <strong>Pigeon Postal Service</strong> you can create packaging labels in advance, making it easy to print labels in advance. Depending on your label printer you can choose the correct size for the label. Use the <em>'Track & Trace prefix'</em> so you can easily recognize from which webshop the label was created. <br /><br />Thank you for using PPS."
+				},
+				{
+					"name":         "intro_line2",
+					"label":        "",
+					"element_type": "text",
+					"value":        "Choose the suitable options below to generate a label."
+				},
+				{
+					"name":         "insured_shipping",
+					"label":        "Insured shipping",
+					"element_type": "input_select",
+					"options":      [
+						{
+							"label":    "No",
+							"value":    "0",
+							"selected": true
+						},
+						{
+							"label": "Yes (+ &euro; 4,50)",
+							"value": "1"
+						}
+					]
+				},
+				{
+					"name":         "track_and_trace_prefix",
+					"label":        "Track &amp; Trace prefix",
+					"element_type": "input_text"
+				},
+				{
+					"name":         "direct_download",
+					"label":        "Download package label directly",
+					"element_type": "input_checkbox",
+					"value":        "1"
+				},
+				{
+					"name":         "format_label",
+					"label":        "Label format",
+					"element_type": "input_radio",
+					"options":      [
+						{
+							"label": "A4",
+							"value": "A4"
+						},
+						{
+							"label": "A5",
+							"value": "A5"
+						},
+						{
+							"label":    "A6",
+							"value":    "A6",
+							"selected": true
+						}
+					]
+				},
+				{
+					"name":         "submit",
+					"label":        "Submit",
+					"value":        "send",
+					"element_type": "input_button",
+					"icon":         "fa-share"
+				}
+			]
+		},
+		{
+			"name":     "success",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "Thank you for using Pigeon Postal Service. The label can be downloaded with the link below."
+				},
+				{
+					"name":         "package_label_1",
+					"label":        "Package label",
+					"element_type": "deeplink",
+					"icon":         "fa-file-pdf-o"
+				}
+			]
+		},
+		{
+			"name":     "success-direct-download",
+			"endpoint": "https://demo.securearea.eu/Examples/PostalService/Endpoint.php",
+			"elements": [
+				{
+					"name":         "description",
+					"label":        "Pigeon Postal Service - Label creator",
+					"element_type": "text",
+					"value":        "Thank you for using Pigeon Postal Service. The label can be downloaded with the link below."
+				},
+				{
+					"name":         "package_label_1",
+					"label":        "Package label",
+					"element_type": "deeplink",
+					"icon":         "fa-file-pdf-o"
+				},
+				{
+					"name":         "attachment_label_1",
+					"label":        "",
+					"element_type": "attachment"
+				}
+			]
+		}
+	]
+}

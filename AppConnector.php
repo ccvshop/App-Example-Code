@@ -9,9 +9,13 @@
 	use AppConnector\Exceptions\InvalidCredentialException;
 	use AppConnector\Exceptions\InvalidHashException;
 	use AppConnector\Exceptions\InvalidJsonException;
+	use AppConnector\Http\Hash;
 	use AppConnector\Http\WebRequest;
 	use AppConnector\Json\JsonSerializer;
 	use AppConnector\Log\Log;
+
+	require_once('Config.php');
+	require_once('Sql/Connection.php');
 
 	require_once('Data/Data_Core.php');
 	require_once('Data/Data_Credential.php');
@@ -24,6 +28,7 @@
 	require_once('Exceptions/InvalidJsonException.php');
 	require_once('Json/JsonSerializer.php');
 	require_once('Http/WebRequest.php');
+	require_once('Http/Hash.php');
 	require_once('Log/Log.php');
 
 	/**
@@ -33,70 +38,35 @@
 	 * @package AppConnector
 	 * @author  Adriaan Meijer
 	 * @date    2014-10-13
-	 * @version 1.0    - First draft
-	 *          1.1    - Added logging
-	 *          1.2	   - Added construct check on config costants
+	 * @version 1.0        - First draft
+	 *          1.1        - Added logging
+	 *          1.2        - Added construct check on config costants
+	 *          1.3        - Added additional examples for interactive code blocks
+	 *          1.4        - Nick Postma: demo.securearea.eu replacement with config data
+	 *          1.5        - Thijs Bekke: Example of RankingTheProducts
 	 */
 	class AppConnector {
 		/**
-		 * This contains a secret key which is unique for this App.
-		 * You can find this as a property of the App in the Developer App Center
-		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
+		 * @var Credential Credential Contains the credentials. Used for example purposes only
 		 */
-		const AppSecretKey = null;
+		protected $Credential;
 
 		/**
-		 * This is the URI of the handshake. Use this to validate calls from the App store.
-		 * Example: https://demo.biedmeer.nl/Handshake.php
+		 * @var null|int Contains the ID
 		 */
-		const AppHandshakeUri = null;
-
-		/**
-		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
-		 * Example: https://demo.biedmeer.nl/UnInstall.php
-		 */
-		const AppUninstallUri = null;
-
-		/**
-		 * This is the field in the header of each request that contains the hash. Do NOT change this unless instructed by CCV.
-		 */
-		const Header_Hash = 'x-hash';
-
-		/**
-		 * This is the encryption method with which the hash was made. Do NOT change this unless instructed by CCV.
-		 */
-		const Hash_Encryption = 'sha512';
-
-		/**
-		 * This character separates the fields which are hashed. Do NOT change this unless instructed by CCV.
-		 */
-		const Hash_Field_Separator = '|';
-
-		/**
-		 * @var object Credential Contains the credentials. Used for example purposes only
-		 */
-		private $Credential;
-
-		/**
-		 * @var array Contains the webhooks which need to be Posted to the web shop. Used for example purposes only.
-		 */
-		private $RequiredWebHooks = array(
-			array('event' => 'products.created', 'address' => 'https://development.bmdev.nl/void.php'),
-			array('event' => 'products.updated', 'address' => 'https://development.bmdev.nl/void.php'),
-			array('event' => 'products.deleted', 'address' => 'https://development.bmdev.nl/void.php'),
-		);
+		protected $RemoteAppId = null;
 
 		public function __construct() {
-			if(is_null($this::AppSecretKey)) {
-				throw new \Exception('AppSecretKey is empty. Please config AppConnector.php');
+			if(is_null(Config::AppSecretKey)) {
+				throw new \Exception('AppSecretKey is empty. Please config Config.php');
 			}
 
-			if(is_null($this::AppHandshakeUri)) {
-				throw new \Exception('AppHandshakeUri is empty. Please config AppConnector.php');
+			if(is_null(Config::AppHandshakeUri)) {
+				throw new \Exception('AppHandshakeUri is empty. Please config Config.php');
 			}
 
-			if(is_null($this::AppUninstallUri)) {
-				throw new \Exception('AppUnInstallUri is empty. Please config AppConnector.php');
+			if(is_null(Config::AppUninstallUri)) {
+				throw new \Exception('AppUnInstallUri is empty. Please config Config.php');
 			}
 		}
 
@@ -108,12 +78,14 @@
 		 * @throws InvalidJsonException
 		 */
 		public function ProcessCredentials() {
-			$this->ValidateHash($this::AppHandshakeUri);
+			Log::Write(__FUNCTION__, 'START');
+			$this->ValidateHash(Config::AppHandshakeUri);
 
 			$oData = JsonSerializer::DeSerialize(@file_get_contents('php://input'));
 
 			$this->Credential = new Credential($oData);
 			Data_Credential::Insert($this->Credential);
+			Log::Write(__FUNCTION__, 'END');
 		}
 
 		/**
@@ -130,30 +102,48 @@
 
 			Data_Credential::Update($this->Credential);
 
-			#Creating WebHooks in the webshop
-			$this->Install_WebHooks();
+			switch($_REQUEST['install_type']) {
+				case 'webhooks':
+					$this->Install_WebHooks();
+					break;
+				case 'tracking_pixel':
+					$this->Install_TrackingPixel();
+					break;
+				case 'postal_service':
+					$this->Install_PostalService();
+					break;
+				case 'ranking_the_product_service':
+					$this->Install_RankingTheProduct();
+					break;
+				case 'bare':
+					#Just install the app.
+				default:
+					break;
+			}
 
 			#Marking the app as installed (MANDATORY).
 			$this->Install_App();
 		}
 
 		/**
-		 * Creates the required webhooks in the webshop.
+		 * Creates the webhooks in the webshop.
 		 *
 		 * @throws InvalidJsonException
 		 */
-		private function Install_WebHooks() {
+		protected function Install_WebHooks() {
 			$oWebRequest = new WebRequest();
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/webhooks');
 
-			foreach($this->RequiredWebHooks as $aWebHook) {
-				$oData          = new \stdClass();
-				$oData->event   = $aWebHook['event'];
-				$oData->address = $aWebHook['address'];
+			#These webhooks will be created in the webshop. When the event is triggered a payload will be posted to the address.
+			$aWebHooksToInstall   = [];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.created', 'address' => 'https://demo.securearea.eu/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.updated', 'address' => 'https://demo.securearea.eu/void.php'];
+			$aWebHooksToInstall[] = (object) ['event' => 'products.deleted', 'address' => 'https://demo.securearea.eu/void.php'];
 
+			foreach($aWebHooksToInstall as $oData) {
 				$oWebRequest->SetData($oData);
 				$sOutput = $oWebRequest->Post();
 
@@ -166,6 +156,124 @@
 		}
 
 		/**
+		 * Installing a app code block which places a tracking pixel in the footer on each frontend page.
+		 *
+		 * @throws \AppConnector\Exceptions\InvalidApiResponse
+		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 */
+		protected function Install_TrackingPixel() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+
+			$iAppId = $this->GetRemoteAppId();
+
+			#Delete all current app codeblocks already installed for this app. Making it a clean install.
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+			$sOutput                 = $oWebRequest->Get();
+			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
+
+			if(isset($aCollectionOfCodeBlocks->items)) {
+				foreach($aCollectionOfCodeBlocks->items as $oItem) {
+					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+					$oWebRequest->Delete();
+				}
+			}
+
+			#Creating new codeblock for the tracking pixel in the footer of each page.
+			$oCodeBlock              = new \stdClass();
+			$oCodeBlock->placeholder = 'footer';
+			$oCodeBlock->value       = '<img src="https://demo.securearea.eu/pixel.php" width="1" height="1" />';
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+		}
+
+		/**
+		 * Installs the Postal Service label creator. A merchant can create labels in his order management.
+		 *
+		 * @throws \AppConnector\Exceptions\InvalidApiResponse
+		 * @throws \AppConnector\Exceptions\InvalidJsonException
+		 */
+		protected function Install_PostalService() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+
+			$iAppId = $this->GetRemoteAppId();
+
+			#Delete all current app codeblocks already installed for this app. Making it a clean install.
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+			$sOutput                 = $oWebRequest->Get();
+			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
+
+			if(isset($aCollectionOfCodeBlocks->items)) {
+				foreach($aCollectionOfCodeBlocks->items as $oItem) {
+					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+					$oWebRequest->Delete();
+				}
+			}
+
+			#Creating new codeblock for the send service.
+			$sData = file_get_contents('Examples/PostalService/AppCodeBlock.json');
+
+			#Replace demo.securearea.eu for config setting if default scheme is used
+			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+
+			$oCodeBlock                      = new \stdClass();
+			$oCodeBlock->placeholder         = 'backend-orders-external_connections';
+			$oCodeBlock->interactive_content = json_decode($sData);
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+		}
+
+		protected function Install_RankingTheProduct() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+
+			$iAppId = $this->GetRemoteAppId();
+
+			#Delete all current app codeblocks already installed for this app. Making it a clean install.
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+			$sOutput                 = $oWebRequest->Get();
+			$aCollectionOfCodeBlocks = JsonSerializer::DeSerialize($sOutput);
+
+			if(isset($aCollectionOfCodeBlocks->items)) {
+				foreach($aCollectionOfCodeBlocks->items as $oItem) {
+					$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+					$oWebRequest->Delete();
+				}
+			}
+
+			#Creating new codeblock for the send service.
+			$sData = file_get_contents('Examples/RankingTheProduct/AppCodeBlock.json');
+
+			#Replace demo.securearea.eu for config setting if default scheme is used
+			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+
+			$oCodeBlock                      = new \stdClass();
+			$oCodeBlock->placeholder         = 'backend-show_product-meta_data';
+			$oCodeBlock->interactive_content = json_decode($sData);
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+		}
+
+		/**
 		 * Mandatory.
 		 * Calls the API and retrieves the App.Id associated with the api_public.
 		 * After that a Patch is send to update the app.is_installed property, marking it as installed.
@@ -173,29 +281,18 @@
 		 * @throws InvalidApiResponse
 		 * @throws InvalidJsonException
 		 */
-		private function Install_App() {
+		protected function Install_App() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
-			$oWebRequest->SetApiResource('/api/rest/v1/apps');
-			$sOutput = $oWebRequest->Get();
-
-			$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
-
-			if(!isset($aCollectionOfApps->items)) {
-				throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
-			}
-
-			if(count($aCollectionOfApps->items) > 1) {
-				throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
-			}
-			$iAppId = $aCollectionOfApps->items[0]->id;
 
 			#Marking app as 'installed'
 			$oApp               = new \stdClass();
 			$oApp->is_installed = true;
+
+			$iAppId = $this->GetRemoteAppId();
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId);
 			$oWebRequest->SetData($oApp);
@@ -211,7 +308,7 @@
 		 * @throws InvalidJsonException
 		 */
 		public function UnInstall() {
-			$this->ValidateHash($this::AppUninstallUri);
+			$this->ValidateHash(Config::AppUninstallUri);
 
 			$oPostedData      = JsonSerializer::DeSerialize(@file_get_contents('php://input'));
 			$this->Credential = Data_Credential::GetOneByPublicKey($oPostedData->api_public);
@@ -244,19 +341,40 @@
 		 *
 		 * @throws InvalidHashException
 		 */
-		private function ValidateHash($sUri) {
+		protected function ValidateHash($sUri) {
 			$aRequestHeaders = apache_request_headers();
-			Log::Write('ValidateHash', 'VALIDATE', $aRequestHeaders[self::Header_Hash]);
-			$aDataToHash[] = $sUri;
-			$aDataToHash[] = @file_get_contents('php://input');
 
-			$sStringToHash = implode(static::Hash_Field_Separator, $aDataToHash);
+			$oHash  = new Hash();
+			$bValid = $oHash->AddData($sUri)->AddData(@file_get_contents('php://input'))->IsValid($aRequestHeaders[Hash::Header_Hash]);
 
-			$sHash = hash_hmac(static::Hash_Encryption, $sStringToHash, $this::AppSecretKey);
-
-			if($sHash !== $aRequestHeaders[self::Header_Hash]) {
+			if($bValid === false) {
 				throw new InvalidHashException();
 			}
-			Log::Write('ValidateHash', 'VALIDATE OK', $aRequestHeaders[self::Header_Hash]);
+		}
+
+		protected function GetRemoteAppId() {
+			if(is_null($this->RemoteAppId)) {
+				$oWebRequest = new WebRequest();
+				#Getting Remote App resource
+				$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+				$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+				$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+				$oWebRequest->SetApiResource('/api/rest/v1/apps');
+				$sOutput = $oWebRequest->Get();
+
+				$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
+
+				if(!isset($aCollectionOfApps->items)) {
+					throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
+				}
+
+				if(count($aCollectionOfApps->items) > 1) {
+					throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
+				}
+
+				$this->RemoteAppId = $aCollectionOfApps->items[0]->id;
+			}
+
+			return $this->RemoteAppId;
 		}
 	}

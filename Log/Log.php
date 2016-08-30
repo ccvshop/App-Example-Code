@@ -33,11 +33,11 @@
 		}
 
 
-		static public function WriteStartCall(){
-			static::Write('START CALL');
+		static public function WriteStartCall($sFile = ''){
+			static::Write('START CALL', '', $sFile);
 		}
-		static public function WriteEndCall(){
-			static::Write('END CALL');
+		static public function WriteEndCall($sFile = ''){
+			static::Write('END CALL', '', $sFile);
 			fwrite(static::OpenFile(), "\r\n");
 		}
 
@@ -49,7 +49,7 @@
 		 */
 		static private function OpenFile() {
 			if(!is_resource(static::$rLogFile)) {
-				static::$rLogFile = @fopen('./Log/' . date('Y-m-d') . '_AppConnector.log', 'a');
+				static::$rLogFile = @fopen($_SERVER['DOCUMENT_ROOT'].'/Log/' . date('Y-m-d') . '_AppConnector.log', 'a');
 			}
 			return static::$rLogFile;
 		}
