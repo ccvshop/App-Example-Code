@@ -1,0 +1,5 @@
+RewriteEngine On
+
+#RewriteRule ^paymethods$ /Paymethods.php [L,NC]
+RewriteRule ^transactions$ /Examples/PSP/CreateTransaction.php [L,NC]
+RewriteRule ^transactions/(.*)$ /Examples/PSP/GetStatusTransaction.php?transaction_id=$1 [L,NC]

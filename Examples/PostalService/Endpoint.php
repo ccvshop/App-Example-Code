@@ -71,6 +71,7 @@
 
 		#Returns data to the webshop.
 		echo $sResponse;
+
 		die();
 
 	} catch(\Exception $oEx) {

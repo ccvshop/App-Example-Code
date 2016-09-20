@@ -1,0 +1,53 @@
+[
+	{
+		"id":              "ideal",
+		"name":            "iDEAL (demo)",
+		"icon":            "https://static.securearea.eu/website/Images/PayMethods/17_ideal.jpg",
+		"type":            "postsale",
+		"currencies":      ["EUR"],
+		"required_fields": [],
+		"issuers":         [
+			{
+				"id":   "ing",
+				"name": "ING Bank"
+			},
+			{
+				"id":   "rabo",
+				"name": "Rabobank"
+			}
+		]
+	},
+	{
+		"id":              "bcmc",
+		"name":            "BC/MC (demo)",
+		"icon":            "https://static.securearea.eu/website/Images/PayMethods/17_bcmc.jpg",
+		"type":            "postsale",
+		"currencies":      ["EUR"],
+		"required_fields": [],
+		"issuers":         []
+	},
+	{
+		"id":              "visa",
+		"name":            "Visa (demo)",
+		"icon":            "https://static.securearea.eu/website/Images/PayMethods/17_visa.jpg",
+		"type":            "postsale",
+		"required_fields": [],
+		"issuers":         []
+	},
+	{
+		"id":              "afterpay",
+		"name":            "Afterpay (demo)",
+		"icon":            "https://static.securearea.eu/website/Images/PayMethods/24.png",
+		"type":            "presale",
+		"currencies":      ["EUR"],
+		"required_fields": [
+			"first_name",
+			"last_name",
+			"address",
+			"gender",
+			"mobile",
+			"birthdate"
+		],
+		"issuers":         []
+	}
+]

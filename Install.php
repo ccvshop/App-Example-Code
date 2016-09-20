@@ -62,8 +62,8 @@
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
 					<input type="hidden" name="install_type" id="install_type" value="bare"/>
 
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
 
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>
@@ -85,8 +85,8 @@
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
 					<input type="hidden" name="install_type" id="install_type" value="webhooks"/>
 
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
 
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>
@@ -109,8 +109,8 @@
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
 					<input type="hidden" name="install_type" id="install_type" value="tracking_pixel"/>
 
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
 
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>
@@ -134,8 +134,8 @@
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
 					<input type="hidden" name="install_type" id="install_type" value="postal_service"/>
 
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
 
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>
@@ -158,8 +158,39 @@
 					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
 					<input type="hidden" name="install_type" id="install_type" value="ranking_the_product_service"/>
 
-					<label for="customer_id">Customer Id</label>
-					<input type="text" name="customer_id" id="customer_id" value="1337"/>
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
+
+					<button name="Cancel" class="btn">Cancel</button>
+					<button name="Install" class="btn btn-success">Install</button>
+				</form>
+			</div>
+		</div>
+	<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Paymethods
+
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>The following paymethods will become available in your webshop.</p>
+				<?php
+					foreach(json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/Examples/PSP/Paymethods.json')) as $oPaymethod) {
+						echo '<span style="display: inline-block; width: 75px;">';
+						echo '<img src="' . $oPaymethod->icon . '" /> ';
+						echo '</span>';
+						echo $oPaymethod->name;
+						echo '<br />';
+					}
+				?>
+				<form action="Install.php" method="post">
+					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+					<input type="hidden" name="install_type" id="install_type" value="app_psp"/>
+
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
 
 					<button name="Cancel" class="btn">Cancel</button>
 					<button name="Install" class="btn btn-success">Install</button>

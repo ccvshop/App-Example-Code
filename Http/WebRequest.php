@@ -43,6 +43,7 @@
 
 		/**
 		 * Makes a GET request to the REST API
+		 *
 		 * @return string
 		 * @throws InvalidApiResponse
 		 */
@@ -64,8 +65,8 @@
 			curl_setopt($rCurlHandler, CURLOPT_URL, $this->GetApiRoot() . $this->GetApiResource());
 			curl_setopt($rCurlHandler, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($rCurlHandler, CURLOPT_CUSTOMREQUEST, $sMethod);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER,0);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST,0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST, 0);
 
 			curl_setopt($rCurlHandler, CURLOPT_HTTPHEADER,
 						array(
@@ -93,6 +94,7 @@
 
 		/**
 		 * Makes a DELETE request to the REST API
+		 *
 		 * @return string
 		 * @throws InvalidApiResponse
 		 */
@@ -114,8 +116,8 @@
 			curl_setopt($rCurlHandler, CURLOPT_URL, $this->GetApiRoot() . $this->GetApiResource());
 			curl_setopt($rCurlHandler, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($rCurlHandler, CURLOPT_CUSTOMREQUEST, $sMethod);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER,0);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST,0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST, 0);
 
 			curl_setopt($rCurlHandler, CURLOPT_HTTPHEADER,
 						array(
@@ -133,7 +135,6 @@
 			Log::Write('WebRequest', 'DELETE::HTTPCODE', $iHTTPCode);
 			Log::Write('WebRequest', 'DELETE::RESPONSE', $sOutput);
 
-
 			if($iHTTPCode !== 204) {
 				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 204');
 			}
@@ -142,6 +143,7 @@
 
 		/**
 		 * Makes a POST request to the REST API
+		 *
 		 * @return string
 		 * @throws InvalidApiResponse
 		 */
@@ -164,8 +166,8 @@
 			curl_setopt($rCurlHandler, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($rCurlHandler, CURLOPT_POSTFIELDS, $this->GetData());
 			curl_setopt($rCurlHandler, CURLOPT_CUSTOMREQUEST, $sMethod);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER,0);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST,0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST, 0);
 
 			curl_setopt($rCurlHandler, CURLOPT_HTTPHEADER,
 						array(
@@ -186,14 +188,15 @@
 
 			$this->SetData('');
 
-			if($iHTTPCode !== 201) {
-				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 201');
+			if(!in_array($iHTTPCode, array(200, 201))) {
+				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 200|201 on [POST] '. $this->GetApiRoot() . $this->GetApiResource());
 			}
 			return $sOutput;
 		}
 
 		/**
 		 * Makes a PATCH request to the REST API
+		 *
 		 * @return string
 		 * @throws InvalidApiResponse
 		 */
@@ -216,8 +219,8 @@
 			curl_setopt($rCurlHandler, CURLOPT_RETURNTRANSFER, 1);
 			curl_setopt($rCurlHandler, CURLOPT_POSTFIELDS, $this->GetData());
 			curl_setopt($rCurlHandler, CURLOPT_CUSTOMREQUEST, $sMethod);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER,0);
-			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST,0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST, 0);
 
 			curl_setopt($rCurlHandler, CURLOPT_HTTPHEADER,
 						array(

@@ -115,6 +115,9 @@
 				case 'ranking_the_product_service':
 					$this->Install_RankingTheProduct();
 					break;
+				case 'app_psp':
+					$this->Install_AppPSP();
+					break;
 				case 'bare':
 					#Just install the app.
 				default:
@@ -236,6 +239,7 @@
 			$oWebRequest->Post();
 		}
 
+
 		protected function Install_RankingTheProduct() {
 			$oWebRequest = new WebRequest();
 			#Getting Remote App resource
@@ -258,8 +262,10 @@
 				}
 			}
 
+
 			#Creating new codeblock for the send service.
 			$sData = file_get_contents('Examples/RankingTheProduct/AppCodeBlock.json');
+
 
 			#Replace demo.securearea.eu for config setting if default scheme is used
 			$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
@@ -270,6 +276,39 @@
 
 			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 			$oWebRequest->SetData($oCodeBlock);
+			$oWebRequest->Post();
+
+		}
+
+		protected function Install_AppPSP() {
+			$oWebRequest = new WebRequest();
+			#Getting Remote App resource
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+			$oWebRequest->SetApiResource('/api/rest/v1/apps');
+			$sOutput = $oWebRequest->Get();
+
+			$aCollectionOfApps = JsonSerializer::DeSerialize($sOutput);
+
+			if(!isset($aCollectionOfApps->items)) {
+				throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
+			}
+
+			if(count($aCollectionOfApps->items) > 1) {
+				throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
+			}
+			$iAppId = $aCollectionOfApps->items[0]->id;
+
+			#Marking app as 'installed'
+			$oAppPSP           = new \stdClass();
+			$oAppPSP->name     = 'Smoke & Mirrors PSP';
+			$oAppPSP->description   = 'Smoke & Mirrors PSP is installed via the App Store.';
+			$oAppPSP->endpoint = Config::AppUri;
+			$oAppPSP->paymethods =  json_decode(file_get_contents('Examples/PSP/Paymethods.json'));
+
+			$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/apppsp/');
+			$oWebRequest->SetData($oAppPSP);
 			$oWebRequest->Post();
 		}
 
