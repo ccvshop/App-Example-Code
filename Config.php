@@ -15,7 +15,7 @@
 		 * This Uri is used in the update schema example
 		 * Note: Remove possible trailing slashes.
 		 */
-		const AppUri = 'https://tbekke-app.ccvdev.nl';
+		const AppUri = 'https://ameijer-app.ccvdev.nl';
 
 		/**
 		 * This contains a secret key which is unique for this App.
@@ -23,21 +23,21 @@
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 * This key is used in the AppConnector.php
 		 */
-		const AppSecretKey = '9oyiv4ax86t0q35753jzee2n4l449u28';
+		const AppSecretKey = '3lch7r6h5470hnshpx5xzu1h0ktvel58';
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/Handshake.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppHandshakeUri = 'https://tbekke-app.ccvdev.nl/Handshake.php';
+		const AppHandshakeUri = 'https://ameijer-app.ccvdev.nl/Handshake.php';
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/UnInstall.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppUninstallUri = 'https://tbekke-app.ccvdev.nl/UnInstall.php';
+		const AppUninstallUri = 'https://ameijer-app.ccvdev.nl/UnInstall.php';
 
 		/**
 		 * Default setting for storing credentials.
@@ -69,6 +69,5 @@
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
 		const DatabasePassword = 'bied1960';
-
 
 	}

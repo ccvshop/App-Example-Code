@@ -162,79 +162,65 @@
 		}
 
 		protected function Install_Language() {
+			#First we need to create a new language.
 			$oWebRequest = new WebRequest();
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/languages/');
 
-			$oLanguage = new \stdClass();
-			$oLanguage->label = "Pirate";
-			$oLanguage->base_language  = "en";
-			$oLanguage->flag_icon  = "pi";
+			#We'll be creating Pirate language.
+			$oLanguage                = new \stdClass();
+			$oLanguage->label         = "Pirate";
+			$oLanguage->base_language = "en";
+			$oLanguage->flag_icon     = "pi";
 
 			$oWebRequest->SetData($oLanguage);
 			try {
-				$oWebRequest->Post();
-			}catch (InvalidApiResponse $e) {
+				 $sOutput = $oWebRequest->Post();
+				 $oPirateLanguage = Json\JsonSerializer::DeSerialize($sOutput);
+			} catch(InvalidApiResponse $e) {
 				return false;
 			}
 
-			$oWebRequest = new WebRequest();
-			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
-			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
-			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
-			$oWebRequest->SetApiResource('/api/rest/v1/languages/');
-
-			$aLanguages = json_decode($oWebRequest->Get());
-			$aLanguages = $aLanguages->items;
-
-			foreach($aLanguages as $oLanguage) {
-
-				if($oLanguage->label == "Pirate") {
-					$sCode = $oLanguage->iso_code;
-				}
-			}
-
-			if(empty($sCode)) {
-				return;
-			}
-			//We kunnen door,
+			//Now we can add the translation. $aPirate includes all keys and translations.
 			$aPirate = [];
 			include_once('Data/Pirate.php');
-
 
 			$oWebRequest = new WebRequest();
 			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
 			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
 			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
 			$oWebRequest->SetApiResource('/api/rest/v1/translations/');
+			$oWebRequest->SetAcceptLanguage($oPirateLanguage->iso_code);
 
-			$i = 0;
-			$oObject = new \stdClass();
+			$i                     = 0;
+			$oObject               = new \stdClass();
 			$oObject->translations = [];
-			foreach ($aPirate as $aTranslations) {
-				foreach ($aTranslations as $sKey => $sValue) {
+			foreach($aPirate as $sKey => $sValue) {
 
-					$oTranslation = new \stdClass();
-					$oTranslation->key = $sKey;
-					$oTranslation->values = (object)[$sCode => $sValue];
+				$oTranslation        = new \stdClass();
+				$oTranslation->key   = $sKey;
+				$oTranslation->value = $sValue;
 
-					$oObject->translations[] = $oTranslation;
+				$oObject->translations[] = $oTranslation;
 
+				if($i > 100) {
+					$oWebRequest->SetData($oObject);
+					$oWebRequest->Put();
 
-					if ($i > 50) {
-
-						$oWebRequest->SetData($oObject);
-						$oWebRequest->Put();
-
-						$oObject->translations = [];
-						$i = 0;
-					}
-					$i++;
+					$oObject->translations = [];
+					$i                     = 0;
 				}
+				$i++;
 			}
+			if(!empty($oObject->translations)) {
+				$oWebRequest->SetData($oObject);
+				$oWebRequest->Put();
+			}
+			return true;
 		}
+
 		/**
 		 * Installing a app code block which places a tracking pixel in the footer on each frontend page.
 		 *
