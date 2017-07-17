@@ -1,4 +1,4 @@
-<?
+<?php
 	/**
 	 * Step 1. Handshake Endpoint
 	 * The Handshake is the first step in installing the application. The webshop send the initial credentials to the Handshake Endpoint.

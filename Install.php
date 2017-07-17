@@ -71,6 +71,29 @@
 
 			</div>
 		</div>
+        <div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Language installation
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>This will install a language</p>
+
+				<form action="Install.php" method="post">
+					<input type="hidden" name="api_public" id="api_public" value="<?= $_GET['api_public'] ?>"/>
+					<input type="hidden" name="install_type" id="install_type" value="language"/>
+
+					<label for="customer_id">Customer Id (for test purpose only)</label>
+					<input type="text" name="customer_id" id="customer_id" value="<?= rand(0, 10000) ?>"/>
+
+					<button name="Cancel" class="btn">Cancel</button>
+					<button name="Install" class="btn btn-success">Install</button>
+				</form>
+
+			</div>
+		</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<h3 class="panel-title">

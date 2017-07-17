@@ -1,4 +1,5 @@
-<?
+<?php
+
 	/**
 	 * Step 3. UnInstall Endpoint
 	 * Whenever the user uninstalls the app in his webshop, the UnInstall Endpoint will be called.

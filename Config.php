@@ -15,7 +15,7 @@
 		 * This Uri is used in the update schema example
 		 * Note: Remove possible trailing slashes.
 		 */
-		const AppUri = '';
+		const AppUri = 'https://tbekke-app.ccvdev.nl';
 
 		/**
 		 * This contains a secret key which is unique for this App.
@@ -23,21 +23,21 @@
 		 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 		 * This key is used in the AppConnector.php
 		 */
-		const AppSecretKey = '';
+		const AppSecretKey = '9oyiv4ax86t0q35753jzee2n4l449u28';
 
 		/**
 		 * This is the URI of the handshake. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/Handshake.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppHandshakeUri = '';
+		const AppHandshakeUri = 'https://tbekke-app.ccvdev.nl/Handshake.php';
 
 		/**
 		 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 		 * Example: https://demo.securearea.eu/UnInstall.php
 		 * This Uri is used in the AppConnector.php
 		 */
-		const AppUninstallUri = '';
+		const AppUninstallUri = 'https://tbekke-app.ccvdev.nl/UnInstall.php';
 
 		/**
 		 * Default setting for storing credentials.
@@ -50,24 +50,25 @@
 		 * If CredentialStorageType is SQL setup the databasehost for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseHost = '';
+		const DatabaseHost = 'localhost';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasename for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseName = '';
+		const DatabaseName = 'biedmeer_system';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databaseuser for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabaseUsername = '';
+		const DatabaseUsername = 'biedmeer_system';
 
 		/**
 		 * If CredentialStorageType is SQL setup the databasepassword for storage
 		 * This setting is used in Sql\Connecion.php called by Data_Credential.php
 		 */
-		const DatabasePassword = '';
+		const DatabasePassword = 'bied1960';
+
 
 	}

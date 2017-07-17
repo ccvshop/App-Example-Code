@@ -188,7 +188,7 @@
 
 			$this->SetData('');
 
-			if(!in_array($iHTTPCode, array(200, 201))) {
+			if(!in_array($iHTTPCode, array(200, 201, 204))) {
 				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 200|201 on [POST] '. $this->GetApiRoot() . $this->GetApiResource());
 			}
 			return $sOutput;
@@ -242,6 +242,61 @@
 			$this->SetData('');
 
 			if($iHTTPCode !== 204) {
+				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 204');
+			}
+			return $sOutput;
+		}
+
+		/**
+		 * Makes a PUT request to the REST API
+		 *
+		 * @return string
+		 * @throws InvalidApiResponse
+		 */
+		public function Put() {
+			#HTTP method in uppercase (ie: GET, POST, PUT, DELETE)
+			$sMethod    = 'PUT';
+			$sTimeStamp = gmdate('c');
+
+			#Creating the hash
+			$sHashString = implode('|', array($this->GetPublicKey(),
+											  $sMethod,
+											  $this->GetApiResource(),
+											  $this->GetData(),
+											  $sTimeStamp,));
+
+			$sHash = hash_hmac('sha512', $sHashString, $this->GetSecretKey());
+
+			$rCurlHandler = curl_init();
+			curl_setopt($rCurlHandler, CURLOPT_URL, $this->GetApiRoot() . $this->GetApiResource());
+			curl_setopt($rCurlHandler, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($rCurlHandler, CURLOPT_POSTFIELDS, $this->GetData());
+			curl_setopt($rCurlHandler, CURLOPT_CUSTOMREQUEST, $sMethod);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYPEER, 0);
+			curl_setopt($rCurlHandler, CURLOPT_SSL_VERIFYHOST, 0);
+
+			curl_setopt($rCurlHandler, CURLOPT_HTTPHEADER,
+						array(
+							"x-date: " . $sTimeStamp,
+							"x-hash: " . $sHash,
+							"x-public: " . $this->GetPublicKey(),
+							"Content-Type: text/json",
+						)
+			);
+			$sOutput   = curl_exec($rCurlHandler);
+			$iHTTPCode = curl_getinfo($rCurlHandler, CURLINFO_HTTP_CODE);
+			curl_close($rCurlHandler);
+
+
+			Log::Write('WebRequest', 'PUT::REQUEST', $this->GetApiRoot() . $this->GetApiResource());
+			Log::Write('WebRequest', 'PUT::DATA', $this->GetData());
+			Log::Write('WebRequest', 'PUT::HTTPCODE', $iHTTPCode);
+			Log::Write('WebRequest', 'PUT::RESPONSE', $sOutput);
+
+			$this->SetData('');
+
+			if($iHTTPCode !== 204) {
+				print_r($sOutput);
 				throw new InvalidApiResponse('HttpCode was ' . $iHTTPCode . '. Expected 204');
 			}
 			return $sOutput;

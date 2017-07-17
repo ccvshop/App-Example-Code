@@ -118,6 +118,9 @@
 				case 'app_psp':
 					$this->Install_AppPSP();
 					break;
+				case 'language':
+					$this->Install_Language();
+					break;
 				case 'bare':
 					#Just install the app.
 				default:
@@ -158,6 +161,80 @@
 			}
 		}
 
+		protected function Install_Language() {
+			$oWebRequest = new WebRequest();
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+			$oWebRequest->SetApiResource('/api/rest/v1/languages/');
+
+			$oLanguage = new \stdClass();
+			$oLanguage->label = "Pirate";
+			$oLanguage->base_language  = "en";
+			$oLanguage->flag_icon  = "pi";
+
+			$oWebRequest->SetData($oLanguage);
+			try {
+				$oWebRequest->Post();
+			}catch (InvalidApiResponse $e) {
+				return false;
+			}
+
+			$oWebRequest = new WebRequest();
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+			$oWebRequest->SetApiResource('/api/rest/v1/languages/');
+
+			$aLanguages = json_decode($oWebRequest->Get());
+			$aLanguages = $aLanguages->items;
+
+			foreach($aLanguages as $oLanguage) {
+
+				if($oLanguage->label == "Pirate") {
+					$sCode = $oLanguage->iso_code;
+				}
+			}
+
+			if(empty($sCode)) {
+				return;
+			}
+			//We kunnen door,
+			$aPirate = [];
+			include_once('Data/Pirate.php');
+
+
+			$oWebRequest = new WebRequest();
+			$oWebRequest->SetPublicKey($this->Credential->GetApiPublic());
+			$oWebRequest->SetSecretKey($this->Credential->GetApiSecret());
+			$oWebRequest->SetApiRoot($this->Credential->GetApiRoot());
+			$oWebRequest->SetApiResource('/api/rest/v1/translations/');
+
+			$i = 0;
+			$oObject = new \stdClass();
+			$oObject->translations = [];
+			foreach ($aPirate as $aTranslations) {
+				foreach ($aTranslations as $sKey => $sValue) {
+
+					$oTranslation = new \stdClass();
+					$oTranslation->key = $sKey;
+					$oTranslation->values = (object)[$sCode => $sValue];
+
+					$oObject->translations[] = $oTranslation;
+
+
+					if ($i > 50) {
+
+						$oWebRequest->SetData($oObject);
+						$oWebRequest->Put();
+
+						$oObject->translations = [];
+						$i = 0;
+					}
+					$i++;
+				}
+			}
+		}
 		/**
 		 * Installing a app code block which places a tracking pixel in the footer on each frontend page.
 		 *
