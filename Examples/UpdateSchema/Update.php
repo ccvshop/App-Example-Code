@@ -1,82 +1,83 @@
 <?php
-	/**
-	 * CLI Script for updating all views of all customers
-	 *
-	 * User: Nick Postma
-	 * Date: 13-6-2016
-	 * Time: 12:11
-	 */
-	namespace AppConnector;
+/**
+ * CLI Script for updating all views of all customers
+ *
+ * User: Nick Postma
+ * Date: 13-6-2016
+ * Time: 12:11
+ */
 
-	use AppConnector\Entities\Credential;
-	use AppConnector\Exceptions\InvalidApiResponse;
+namespace AppConnector;
 
-	require_once(__DIR__ . '/../../AppConnector.php');
+use AppConnector\Entities\Credential;
+use AppConnector\Exceptions\InvalidApiResponse;
 
-	# Get all customers
-	$oCrentalData = new \AppConnector\Data\Data_Credential();
-	$aCrentials   = $oCrentalData->GetAll();
+require_once(__DIR__ . '/../../AppConnector.php');
 
-	# Loop through all customers
-	/**
-	 * @var int        $i
-	 * @var Credential $oCredential
-	 */
-	foreach($aCrentials as $i => $oCredential) {
+# Get all customers
+$oCrentalData = new \AppConnector\Data\Data_Credential();
+$aCrentials   = $oCrentalData->getAll();
 
-		$oWebRequest = new \AppConnector\Http\WebRequest();
-		$oWebRequest->SetPublicKey($oCredential->GetApiPublic());
-		$oWebRequest->SetSecretKey($oCredential->GetApiSecret());
-		$oWebRequest->SetApiRoot($oCredential->GetApiRoot());
-		$oWebRequest->SetApiResource('/api/rest/v1/apps');
-		$sOutput = $oWebRequest->Get();
+# Loop through all customers
+/**
+ * @var int        $i
+ * @var Credential $oCredential
+ */
+foreach ($aCrentials as $i => $oCredential) {
 
-		$aCollectionOfApps = \AppConnector\Json\JsonSerializer::DeSerialize($sOutput);
+    $oWebRequest = new \AppConnector\Http\WebRequest();
+    $oWebRequest->setPublicKey($oCredential->getApiPublic());
+    $oWebRequest->setSecretKey($oCredential->getApiSecret());
+    $oWebRequest->setApiRoot($oCredential->getApiRoot());
+    $oWebRequest->setApiResource('/api/rest/v1/apps');
+    $sOutput = $oWebRequest->get();
 
-		if(!isset($aCollectionOfApps->items)) {
-			throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
-		}
+    $aCollectionOfApps = \AppConnector\Json\JsonSerializer::deSerialize($sOutput);
 
-		if(count($aCollectionOfApps->items) > 1) {
-			throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
-		}
+    if (!isset($aCollectionOfApps->items)) {
+        throw new InvalidApiResponse('Collection contained zero apps. Expected 1.');
+    }
 
-		$iAppId = $aCollectionOfApps->items[0]->id;
+    if (count($aCollectionOfApps->items) > 1) {
+        throw new InvalidApiResponse('Collection contained ' . count($aCollectionOfApps->items) . ' apps. Expected 1.');
+    }
 
-		echo "App found :: " . $iAppId . "\n";
+    $iAppId = $aCollectionOfApps->items[0]->id;
 
-		#Delete all current app codeblocks already installed for this app. There is no way to Patch! So delete and insert.
-		#You sould probably keep track of the installed codeblocks somehow. This is not included in the example APP
-		$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+    echo "App found :: " . $iAppId . "\n";
 
-		$sOutput                 = $oWebRequest->Get();
-		$aCollectionOfCodeBlocks = \AppConnector\Json\JsonSerializer::DeSerialize($sOutput);
+    #Delete all current app codeblocks already installed for this app. There is no way to Patch! So delete and insert.
+    #You sould probably keep track of the installed codeblocks somehow. This is not included in the example APP
+    $oWebRequest->setApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
 
-		if(isset($aCollectionOfCodeBlocks->items)) {
-			foreach($aCollectionOfCodeBlocks->items as $oItem) {
-				echo "Deleting codeblock " . $oItem->id . "\n";
-				$oWebRequest->SetApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
-				$oWebRequest->Delete();
-			}
-		}
+    $sOutput                 = $oWebRequest->get();
+    $aCollectionOfCodeBlocks = \AppConnector\Json\JsonSerializer::deSerialize($sOutput);
 
-		#Inserting new version of the codeblock
-		$oWebRequest = new \AppConnector\Http\WebRequest();
-		$oWebRequest->SetPublicKey($oCredential->GetApiPublic());
-		$oWebRequest->SetSecretKey($oCredential->GetApiSecret());
-		$oWebRequest->SetApiRoot($oCredential->GetApiRoot());
+    if (isset($aCollectionOfCodeBlocks->items)) {
+        foreach ($aCollectionOfCodeBlocks->items as $oItem) {
+            echo "Deleting codeblock " . $oItem->id . "\n";
+            $oWebRequest->setApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+            $oWebRequest->delete();
+        }
+    }
 
-		$sData = file_get_contents(__DIR__ . '/AppCodeBlockV2.json');
+    #Inserting new version of the codeblock
+    $oWebRequest = new \AppConnector\Http\WebRequest();
+    $oWebRequest->setPublicKey($oCredential->getApiPublic());
+    $oWebRequest->setSecretKey($oCredential->getApiSecret());
+    $oWebRequest->setApiRoot($oCredential->getApiRoot());
 
-		#Replace demo.securearea.eu for config setting if default scheme is used
-		$sData = str_replace("https://demo.securearea.eu", Config::AppUri, $sData);
+    $sData = file_get_contents(__DIR__ . '/AppCodeBlockV2.json');
 
-		$oCodeBlock                      = new \stdClass();
-		$oCodeBlock->placeholder         = 'backend-orders-external_connections';
-		$oCodeBlock->interactive_content = json_decode($sData);
+    #Replace demo.securearea.eu for config setting if default scheme is used
+    $sData = str_replace("https://demo.securearea.eu", Config::APP_URI, $sData);
 
-		$oWebRequest->SetApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
-		$oWebRequest->SetData($oCodeBlock);
-		$oWebRequest->Post();
-	}
+    $oCodeBlock                      = new \stdClass();
+    $oCodeBlock->placeholder         = 'backend-orders-external_connections';
+    $oCodeBlock->interactive_content = json_decode($sData);
+
+    $oWebRequest->setApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+    $oWebRequest->setData($oCodeBlock);
+    $oWebRequest->post();
+}
 

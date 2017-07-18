@@ -1,35 +1,35 @@
 <?php
-	require_once('../../Config.php');
-	require_once('../../Data/Data_Core.php');
-	require_once('../../Data/Data_Credential.php');
-	require_once('../../Data/Data_WebHook.php');
-	require_once('../../Data/Data_Transaction.php');
-	require_once('../../Entities/Credential.php');
-	require_once('../../Entities/WebHook.php');
-	require_once('../../Entities/Transaction.php');
-	require_once('../../Entities/Transaction/Address.php');
-	require_once('../../Exceptions/InvalidApiResponse.php');
-	require_once('../../Exceptions/InvalidCredentialException.php');
-	require_once('../../Exceptions/InvalidHashException.php');
-	require_once('../../Exceptions/InvalidTransactionId.php');
-	require_once('../../Exceptions/InvalidJsonException.php');
-	require_once('../../Json/JsonSerializer.php');
-	require_once('../../Http/WebRequest.php');
-	require_once('../../Http/Hash.php');
-	require_once('../../Log/Log.php');
+require_once('../../Config.php');
+require_once('../../Data/Data_Core.php');
+require_once('../../Data/Data_Credential.php');
+require_once('../../Data/Data_WebHook.php');
+require_once('../../Data/Data_Transaction.php');
+require_once('../../Entities/Credential.php');
+require_once('../../Entities/WebHook.php');
+require_once('../../Entities/Transaction.php');
+require_once('../../Entities/Transaction/Address.php');
+require_once('../../Exceptions/InvalidApiResponse.php');
+require_once('../../Exceptions/InvalidCredentialException.php');
+require_once('../../Exceptions/InvalidHashException.php');
+require_once('../../Exceptions/InvalidTransactionId.php');
+require_once('../../Exceptions/InvalidJsonException.php');
+require_once('../../Json/JsonSerializer.php');
+require_once('../../Http/WebRequest.php');
+require_once('../../Http/Hash.php');
+require_once('../../Log/Log.php');
 
-	#Transaction id ophalen uit url en deze ophalen uit de storage.
-	$oTransaction = \AppConnector\Data\Data_Transaction::GetOneByTransactionId($_GET['transaction_id']);
+#Transaction id ophalen uit url en deze ophalen uit de storage.
+$oTransaction = \AppConnector\Data\Data_Transaction::getOneByTransactionId($_GET['transaction_id']);
 
-	if(!empty($_POST)) {
-		if(isset($_POST['status'])) {
-			$oTransaction->SetStatus($_POST['status']);
-		}
-		\AppConnector\Data\Data_Transaction::Update($oTransaction);
+if (!empty($_POST)) {
+    if (isset($_POST['status'])) {
+        $oTransaction->setStatus($_POST['status']);
+    }
+    \AppConnector\Data\Data_Transaction::update($oTransaction);
 
-		header('location: ' . $oTransaction->GetReturnUrl());
-		die();
-	}
+    header('location: ' . $oTransaction->getReturnUrl());
+    die();
+}
 ?>
 <html>
 <head>
@@ -57,10 +57,10 @@
 		</div>
 		<div class="panel-body">
 			<p>
-				Order <?= $oTransaction->GetOrderNumber(); ?> of  <?= $oTransaction->GetCurrency(); ?> <?= $oTransaction->GetAmount(); ?>
-				to be paid with <?= $oTransaction->GetMethod(); ?>.
+				Order <?= $oTransaction->getOrderNumber(); ?> of <?= $oTransaction->getCurrency(); ?> <?= $oTransaction->getAmount(); ?>
+				to be paid with <?= $oTransaction->getMethod(); ?>.
 			</p>
-			<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->GetTransactionId(); ?>" method="post">
+			<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->getTransactionId(); ?>" method="post">
 				<button name="status" value="SUCCESS" class="btn btn-success">Success</button>
 				<button name="status" value="CANCELLED" class="btn btn-danger">Cancel</button>
 				<button name="status" value="FAILED" class="btn btn-danger">Failed</button>
@@ -76,17 +76,17 @@
 			</h3>
 		</div>
 		<div class="panel-body">
-			<p>method: <?= $oTransaction->GetMethod(); ?> </p>
-			<p>issuer: <?= $oTransaction->GetIssuer(); ?> </p>
-			<p>return_url: <?= $oTransaction->GetReturnUrl(); ?> </p>
-			<p>order_id: <?= $oTransaction->GetOrderId(); ?></p>
-			<p>order_number: <?= $oTransaction->GetOrderNumber(); ?></p>
-			<p>amount: <?= $oTransaction->GetAmount(); ?></p>
-			<p>currency: <?= $oTransaction->GetCurrency(); ?></p>
-			<p>transaction_id: <?= $oTransaction->GetTransactionId(); ?></p>
-			<p>create_date: <?= $oTransaction->GetCreated(); ?></p>
-			<p>language: <?= $oTransaction->GetLanguage(); ?></p>
-			<p>status: <?= $oTransaction->GetStatus(); ?></p>
+			<p>method: <?= $oTransaction->getMethod(); ?> </p>
+			<p>issuer: <?= $oTransaction->getIssuer(); ?> </p>
+			<p>return_url: <?= $oTransaction->getReturnUrl(); ?> </p>
+			<p>order_id: <?= $oTransaction->getOrderId(); ?></p>
+			<p>order_number: <?= $oTransaction->getOrderNumber(); ?></p>
+			<p>amount: <?= $oTransaction->getAmount(); ?></p>
+			<p>currency: <?= $oTransaction->getCurrency(); ?></p>
+			<p>transaction_id: <?= $oTransaction->getTransactionId(); ?></p>
+			<p>create_date: <?= $oTransaction->getCreated(); ?></p>
+			<p>language: <?= $oTransaction->getLanguage(); ?></p>
+			<p>status: <?= $oTransaction->getStatus(); ?></p>
 		</div>
 	</div>
 </div>

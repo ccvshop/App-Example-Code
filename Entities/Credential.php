@@ -1,162 +1,180 @@
 <?
-	namespace AppConnector\Entities;
-	/**
-	 * Class Credential
-	 * Represents Credential data
-	 *
-	 * @package AppConnector\Entities
-	 * @author  Adriaan Meijer
-	 * @date    2014-10-13
-	 * @version 1.0    - First draft
-	 */
-	class Credential {
-		/**
-		 * @var string Public key used to connect to the api.
-		 */
-		private $ApiPublic;
-		/**
-		 * @var string Secret key used to connect to the api
-		 */
-		private $ApiSecret;
-		/**
-		 * @var string URI to connect to the api
-		 */
-		private $ApiRoot;
-		/**
-		 * @var string Once the user has successfully installed the app, return him here.
-		 */
-		private $ReturnUrl;
-		/**
-		 * @var int A Customer Id. Used for example purposes only.
-		 */
-		private $CustomerId;
-		/**
-		 * @var string Create date of this Credential. Used for example purposes only.
-		 */
-		private $CreateDate;
 
-		public function __construct(\stdClass $oObject) {
-			$this->SetApiPublic($oObject->api_public);
-			$this->SetApiSecret($oObject->api_secret);
-			$this->SetApiRoot($oObject->api_root);
-			$this->SetReturnUrl($oObject->return_url);
-			$this->SetCustomerId($oObject->customer_id);
-			$this->SetCreateDate($oObject->create_date);
-		}
+namespace AppConnector\Entities;
 
-		/**
-		 * Convert this credential object to an array
-		 * @return array
-		 */
-		public function ToArray() {
-			return [
-				'api_public' => $this->ApiPublic,
-				'api_secret' => $this->ApiSecret,
-				'api_root' => $this->ApiRoot,
-				'return_url' => $this->ReturnUrl,
-				'customer_id' => $this->CustomerId,
-				'create_date' => $this->CreateDate,
-			];
-		}
+/**
+ * Class Credential
+ * Represents Credential data
+ *
+ * @package AppConnector\Entities
+ * @author  Adriaan Meijer
+ * @date    2014-10-13
+ * @version 1.0    - First draft
+ */
+class Credential
+{
+    /**
+     * @var string Public key used to connect to the api.
+     */
+    private $apiPublic;
+    /**
+     * @var string Secret key used to connect to the api
+     */
+    private $apiSecret;
+    /**
+     * @var string URI to connect to the api
+     */
+    private $apiRoot;
+    /**
+     * @var string Once the user has successfully installed the app, return him here.
+     */
+    private $returnUrl;
+    /**
+     * @var int A Customer Id. Used for example purposes only.
+     */
+    private $customerId;
+    /**
+     * @var string Create date of this Credential. Used for example purposes only.
+     */
+    private $createDate;
 
-		/**
-		 * Convert this credential object to an std object
-		 * @return object
-		 */
-		public function ToStd() {
-			return (object)$this->ToArray();
-		}
+    public function __construct(\stdClass $oObject)
+    {
+        $this->setApiPublic($oObject->api_public);
+        $this->setApiSecret($oObject->api_secret);
+        $this->setApiRoot($oObject->api_root);
+        $this->setReturnUrl($oObject->return_url);
+        $this->setCustomerId($oObject->customer_id);
+        $this->setCreateDate($oObject->create_date);
+    }
 
-		/**
-		 * Print this credential as an array
-		 * @return string
-		 */
-		public function __toString()
-		{
-			return print_r($this->ToArray(), 1);
-		}
+    /**
+     * Convert this credential object to an array
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'api_public'  => $this->apiPublic,
+            'api_secret'  => $this->apiSecret,
+            'api_root'    => $this->apiRoot,
+            'return_url'  => $this->returnUrl,
+            'customer_id' => $this->customerId,
+            'create_date' => $this->createDate,
+        ];
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetApiPublic() {
-			return $this->ApiPublic;
-		}
+    /**
+     * Convert this credential object to an std object
+     * @return object
+     */
+    public function toStd()
+    {
+        return (object)$this->toArray();
+    }
 
-		/**
-		 * @param string $ApiPublic
-		 */
-		public function SetApiPublic($ApiPublic) {
-			$this->ApiPublic = $ApiPublic;
-		}
+    /**
+     * Print this credential as an array
+     * @return string
+     */
+    public function __toString()
+    {
+        return print_r($this->toArray(), 1);
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetApiRoot() {
-			return $this->ApiRoot;
-		}
+    /**
+     * @return string
+     */
+    public function getApiPublic()
+    {
+        return $this->apiPublic;
+    }
 
-		/**
-		 * @param string $ApiRoot
-		 */
-		public function SetApiRoot($ApiRoot) {
-			$this->ApiRoot = $ApiRoot;
-		}
+    /**
+     * @param string $ApiPublic
+     */
+    public function setApiPublic($ApiPublic)
+    {
+        $this->apiPublic = $ApiPublic;
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetApiSecret() {
-			return $this->ApiSecret;
-		}
+    /**
+     * @return string
+     */
+    public function getApiRoot()
+    {
+        return $this->apiRoot;
+    }
 
-		/**
-		 * @param string $ApiSecret
-		 */
-		public function SetApiSecret($ApiSecret) {
-			$this->ApiSecret = $ApiSecret;
-		}
+    /**
+     * @param string $ApiRoot
+     */
+    public function setApiRoot($ApiRoot)
+    {
+        $this->apiRoot = $ApiRoot;
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetCreateDate() {
-			return $this->CreateDate;
-		}
+    /**
+     * @return string
+     */
+    public function getApiSecret()
+    {
+        return $this->apiSecret;
+    }
 
-		/**
-		 * @param string $CreateDate
-		 */
-		public function SetCreateDate($CreateDate) {
-			$this->CreateDate = $CreateDate;
-		}
+    /**
+     * @param string $ApiSecret
+     */
+    public function setApiSecret($ApiSecret)
+    {
+        $this->apiSecret = $ApiSecret;
+    }
 
-		/**
-		 * @return int
-		 */
-		public function GetCustomerId() {
-			return $this->CustomerId;
-		}
+    /**
+     * @return string
+     */
+    public function getCreateDate()
+    {
+        return $this->createDate;
+    }
 
-		/**
-		 * @param int $CustomerId
-		 */
-		public function SetCustomerId($CustomerId) {
-			$this->CustomerId = $CustomerId;
-		}
+    /**
+     * @param string $CreateDate
+     */
+    public function setCreateDate($CreateDate)
+    {
+        $this->createDate = $CreateDate;
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetReturnUrl() {
-			return $this->ReturnUrl;
-		}
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
 
-		/**
-		 * @param string $ReturnUrl
-		 */
-		public function SetReturnUrl($ReturnUrl) {
-			$this->ReturnUrl = $ReturnUrl;
-		}
-	}
+    /**
+     * @param int $CustomerId
+     */
+    public function setCustomerId($CustomerId)
+    {
+        $this->customerId = $CustomerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnUrl()
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * @param string $ReturnUrl
+     */
+    public function setReturnUrl($ReturnUrl)
+    {
+        $this->returnUrl = $ReturnUrl;
+    }
+}

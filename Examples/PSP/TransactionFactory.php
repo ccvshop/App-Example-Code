@@ -1,109 +1,116 @@
 <?php
-	namespace AppConnector\Examples\PSP;
 
-	use AppConnector\Data\Data_Credential;
-	use AppConnector\Entities\Credential;
-	use AppConnector\Exceptions\InvalidTransactionId;
+namespace AppConnector\Examples\PSP;
 
-	class TransactionFactory {
-		/** @var Credential */
-		protected $oCredential = null;
+use AppConnector\Data\Data_Credential;
+use AppConnector\Entities\Credential;
+use AppConnector\Exceptions\InvalidTransactionId;
 
-		public function __construct() {
-		}
+class TransactionFactory
+{
+    /** @var Credential */
+    protected $credential = null;
 
-		public function GetStatus($sTransactionId = '') {
-			$this->VerifyHash();
+    public function __construct()
+    {
+    }
 
-			$oTransaction = \AppConnector\Data\Data_Transaction::GetOneByTransactionId($sTransactionId);
-			if($oTransaction->GetCustomerId() !== $this->oCredential->GetCustomerId()) {
-				throw new InvalidTransactionId();
-			}
+    public function getStatus($sTransactionId = '')
+    {
+        $this->verifyHash();
 
-			$sResponse = \AppConnector\Json\JsonSerializer::Serialize($oTransaction->toStdClass());
+        $oTransaction = \AppConnector\Data\Data_Transaction::getOneByTransactionId($sTransactionId);
+        if ($oTransaction->getCustomerId() !== $this->credential->getCustomerId()) {
+            throw new InvalidTransactionId();
+        }
 
-			$oHash = new \AppConnector\Http\Hash($this->oCredential->GetApiSecret());
-			$sHash = $oHash->AddData(\AppConnector\Config::AppUri . $_SERVER['REQUEST_URI'])->AddData($sResponse)->Hash();
+        $sResponse = \AppConnector\Json\JsonSerializer::serialize($oTransaction->toStdClass());
 
-			header('HTTP/1.1 200 OK', true, 200);
-			header('x-hash: ' . $sHash);
+        $oHash = new \AppConnector\Http\Hash($this->credential->getApiSecret());
+        $sHash = $oHash->addData(\AppConnector\Config::APP_URI . $_SERVER['REQUEST_URI'])->addData($sResponse)->hash();
 
-			return $sResponse;
-		}
+        header('HTTP/1.1 200 OK', true, 200);
+        header('x-hash: ' . $sHash);
 
-		/**
-		 *
-		 * @return string
-		 * @throws \AppConnector\Exceptions\InvalidHashException
-		 */
-		public function Create() {
-			$sIncomingData = @file_get_contents('php://input');
-			\AppConnector\Log\Log::Write('TransactionFactory', 'INPUT_BODY', $sIncomingData);
-			$this->VerifyHash($sIncomingData);
+        return $sResponse;
+    }
 
-			$oPostedData  = \AppConnector\Json\JsonSerializer::DeSerialize(@file_get_contents('php://input'));
-			$oTransaction = new \AppConnector\Entities\Transaction($oPostedData);
-			$this->DoCreditCheck($oTransaction);
+    /**
+     *
+     * @return string
+     * @throws \AppConnector\Exceptions\InvalidHashException
+     */
+    public function create()
+    {
+        $sIncomingData = @file_get_contents('php://input');
+        \AppConnector\Log\Log::write('TransactionFactory', 'INPUT_BODY', $sIncomingData);
+        $this->verifyHash($sIncomingData);
 
-			$oTransaction->SetCustomerId($this->oCredential->GetCustomerId());
-			$oTransaction->SetPayUrl(\AppConnector\Config::AppUri . '/Examples/PSP/PaymentSimulator.php?transaction_id=' . $oTransaction->GetTransactionId());
+        $oPostedData  = \AppConnector\Json\JsonSerializer::deSerialize(@file_get_contents('php://input'));
+        $oTransaction = new \AppConnector\Entities\Transaction($oPostedData);
+        $this->doCreditCheck($oTransaction);
 
-			\AppConnector\Data\Data_Transaction::Insert($oTransaction);
+        $oTransaction->setCustomerId($this->credential->getCustomerId());
+        $oTransaction->setPayUrl(\AppConnector\Config::APP_URI . '/Examples/PSP/PaymentSimulator.php?transaction_id=' . $oTransaction->getTransactionId());
 
-			$sResponse = \AppConnector\Json\JsonSerializer::Serialize($oTransaction->toStdClass());
+        \AppConnector\Data\Data_Transaction::insert($oTransaction);
 
-			\AppConnector\Log\Log::Write('TransactionFactory', 'OUTPUT_BODY', $sResponse);
-			$oHash = new \AppConnector\Http\Hash($this->oCredential->GetApiSecret());
-			$sHash = $oHash->AddData(\AppConnector\Config::AppUri . $_SERVER['REQUEST_URI'])->AddData($sResponse)->Hash();
+        $sResponse = \AppConnector\Json\JsonSerializer::serialize($oTransaction->toStdClass());
 
-			header('HTTP/1.1 200 OK', true, 200);
-			header('x-hash: ' . $sHash);
+        \AppConnector\Log\Log::write('TransactionFactory', 'OUTPUT_BODY', $sResponse);
+        $oHash = new \AppConnector\Http\Hash($this->credential->getApiSecret());
+        $sHash = $oHash->addData(\AppConnector\Config::APP_URI . $_SERVER['REQUEST_URI'])->addData($sResponse)->hash();
 
-			return $sResponse;
-		}
+        header('HTTP/1.1 200 OK', true, 200);
+        header('x-hash: ' . $sHash);
 
-		/**
-		 * @param string $sIncomingData
-		 *
-		 * @throws \AppConnector\Exceptions\InvalidHashException
-		 */
-		protected function VerifyHash($sIncomingData = '') {
-			$aRequestHeaders   = apache_request_headers();
-			$sApiPublic        = $aRequestHeaders[\AppConnector\Http\Hash::Header_Public];
-			$this->oCredential = Data_Credential::GetOneByPublicKey($sApiPublic);
+        return $sResponse;
+    }
 
-			#Validate if the data we received is correct and authenticated.
-			$oIncomingHash = new \AppConnector\Http\Hash($this->oCredential->GetApiSecret());
+    /**
+     * @param string $sIncomingData
+     *
+     * @throws \AppConnector\Exceptions\InvalidHashException
+     */
+    protected function verifyHash($sIncomingData = '')
+    {
+        $aRequestHeaders  = apache_request_headers();
+        $sApiPublic       = $aRequestHeaders[\AppConnector\Http\Hash::Header_Public];
+        $this->credential = Data_Credential::getOneByPublicKey($sApiPublic);
 
-			$oIncomingHash->AddData(\AppConnector\Config::AppUri . $_SERVER['REQUEST_URI']);
-			if(!empty($sIncomingData)) {
-				$oIncomingHash->AddData($sIncomingData);
-			}
+        #Validate if the data we received is correct and authenticated.
+        $oIncomingHash = new \AppConnector\Http\Hash($this->credential->getApiSecret());
 
-			$bValid = $oIncomingHash->IsValid($aRequestHeaders[\AppConnector\Http\Hash::Header_Hash]);
+        $oIncomingHash->addData(\AppConnector\Config::APP_URI . $_SERVER['REQUEST_URI']);
+        if (!empty($sIncomingData)) {
+            $oIncomingHash->addData($sIncomingData);
+        }
 
-			if($bValid === false) {
-				throw new \AppConnector\Exceptions\InvalidHashException();
-			}
-		}
+        $bValid = $oIncomingHash->isValid($aRequestHeaders[\AppConnector\Http\Hash::Header_Hash]);
 
-		/**
-		 * @param \AppConnector\Entities\Transaction $oTransaction
-		 */
-		protected function DoCreditCheck(\AppConnector\Entities\Transaction &$oTransaction) {
-			switch($oTransaction->GetMethod()) {
-				case 'afterpay':
-					\AppConnector\Log\Log::Write('TransactionFactory', 'DO_CREDIT_CHECK', 'Age is ' . $oTransaction->GetAge());
-					if($oTransaction->GetAge() >= 18) {
-						$oTransaction->SetStatus('SUCCESS');
-					} else {
-						$oTransaction->SetStatus('FAILED')->SetError('Consumer does not meet the age requirement.');
-					}
-					break;
-				default:
-					break;
-			}
+        if ($bValid === false) {
+            throw new \AppConnector\Exceptions\InvalidHashException();
+        }
+    }
 
-			return;
-		}
-	}
+    /**
+     * @param \AppConnector\Entities\Transaction $oTransaction
+     */
+    protected function doCreditCheck(\AppConnector\Entities\Transaction &$oTransaction)
+    {
+        switch ($oTransaction->getMethod()) {
+            case 'afterpay':
+                \AppConnector\Log\Log::write('TransactionFactory', 'DO_CREDIT_CHECK', 'Age is ' . $oTransaction->getAge());
+                if ($oTransaction->getAge() >= 18) {
+                    $oTransaction->setStatus('SUCCESS');
+                } else {
+                    $oTransaction->setStatus('FAILED')->setError('Consumer does not meet the age requirement.');
+                }
+                break;
+            default:
+                break;
+        }
+
+        return;
+    }
+}
