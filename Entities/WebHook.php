@@ -1,113 +1,127 @@
 <?
-	namespace AppConnector\Entities;
-	/**
-	 * Class WebHook
-	 *
-	 * @package AppConnector\Entities
-	 * @author  Adriaan Meijer
-	 * @date    2014-10-13
-	 * @version 1.0    - First draft
-	 */
-	class WebHook {
-		/**
-		 * @var int Internal ID of this WebHook. Used for example purposes only.
-		 */
-		private $Id = 0;
 
-		/**
-		 * @var int Customer ID of this WebHook. Used for example purposes only.
-		 */
-		private $CustomerId = 0;
-		/**
-		 * @var string Event of the WebHook, representing an action that takes place on an object is called an event.
-		 */
-		private $Event = '';
-		/**
-		 * @var string Address of the WebHook, representing a remote HTTP URI to which the callback will be posted
-		 */
-		private $Address = '';
-		/**
-		 * @var string Key is used to validate the integrity of the data send by this WebHook
-		 */
-		private $Key = '';
+namespace AppConnector\Entities;
 
-		public function __construct(\stdClass $oObject) {
-			if(isset($oObject->customer_id)){
-				$this->SetCustomerId($oObject->customer_id);
-			}
-			$this->SetId($oObject->id);
-			$this->SetEvent($oObject->event);
-			$this->SetAddress($oObject->address);
-			$this->SetKey($oObject->key);
-		}
+/**
+ * Class WebHook
+ *
+ * @package AppConnector\Entities
+ * @author  Adriaan Meijer
+ * @date    2014-10-13
+ * @version 1.0    - First draft
+ */
+class WebHook
+{
+    /**
+     * @var int Internal ID of this WebHook. Used for example purposes only.
+     */
+    private $id = 0;
 
-		/**
-		 * @return int
-		 */
-		public function GetId() {
-			return $this->Id;
-		}
+    /**
+     * @var int Customer ID of this WebHook. Used for example purposes only.
+     */
+    private $customerId = 0;
+    /**
+     * @var string Event of the WebHook, representing an action that takes place on an object is called an event.
+     */
+    private $event = '';
+    /**
+     * @var string Address of the WebHook, representing a remote HTTP URI to which the callback will be posted
+     */
+    private $address = '';
+    /**
+     * @var string Key is used to validate the integrity of the data send by this WebHook
+     */
+    private $key = '';
 
-		/**
-		 * @param int $Id
-		 */
-		public function SetId($Id) {
-			$this->Id = $Id;
-		}
+    public function __construct(\stdClass $oObject)
+    {
+        if (isset($oObject->customer_id)) {
+            $this->setCustomerId($oObject->customer_id);
+        }
+        $this->setId($oObject->id);
+        $this->setEvent($oObject->event);
+        $this->setAddress($oObject->address);
+        $this->setKey($oObject->key);
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetAddress() {
-			return $this->Address;
-		}
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-		/**
-		 * @param string $Address
-		 */
-		public function SetAddress($Address) {
-			$this->Address = $Address;
-		}
+    /**
+     * @param int $Id
+     */
+    public function setId($Id)
+    {
+        $this->id = $Id;
+    }
 
-		/**
-		 * @return int
-		 */
-		public function GetCustomerId() {
-			return $this->CustomerId;
-		}
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
 
-		/**
-		 * @param int $CustomerId
-		 */
-		public function SetCustomerId($CustomerId) {
-			$this->CustomerId = $CustomerId;
-		}
+    /**
+     * @param string $Address
+     */
+    public function setAddress($Address)
+    {
+        $this->address = $Address;
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetEvent() {
-			return $this->Event;
-		}
+    /**
+     * @return int
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
 
-		/**
-		 * @param string $Event
-		 */
-		public function SetEvent($Event) {
-			$this->Event = $Event;
-		}
+    /**
+     * @param int $CustomerId
+     */
+    public function setCustomerId($CustomerId)
+    {
+        $this->customerId = $CustomerId;
+    }
 
-		/**
-		 * @return string
-		 */
-		public function GetKey() {
-			return $this->Key;
-		}
+    /**
+     * @return string
+     */
+    public function getEvent()
+    {
+        return $this->event;
+    }
 
-		/**
-		 * @param string $Key
-		 */
-		public function SetKey($Key) {
-			$this->Key = $Key;
-		}
-	}
+    /**
+     * @param string $Event
+     */
+    public function setEvent($Event)
+    {
+        $this->event = $Event;
+    }
+
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param string $Key
+     */
+    public function setKey($Key)
+    {
+        $this->key = $Key;
+    }
+}

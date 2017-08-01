@@ -1,32 +1,34 @@
-<?
-	/**
-	 * Step 3. UnInstall Endpoint
-	 * Whenever the user uninstalls the app in his webshop, the UnInstall Endpoint will be called.
-	 * This will give you the option to process the uninstall.
-	 */
-	namespace AppConnector;
+<?php
 
-	use AppConnector\Log\Log;
+/**
+ * Step 3. UnInstall Endpoint
+ * Whenever the user uninstalls the app in his webshop, the UnInstall Endpoint will be called.
+ * This will give you the option to process the uninstall.
+ */
 
-	try {
-		require_once('AppConnector.php');
+namespace AppConnector;
 
-		Log::WriteStartCall(__FILE__);
-		Log::Write('UnInstall', 'INPUT', @file_get_contents('php://input'));
+use AppConnector\Log\Log;
 
-		$oAppConnector = new AppConnector();
-		$oAppConnector->UnInstall();
+try {
+    require_once('AppConnector.php');
 
-		Log::Write('Handshake', 'OUTPUT', 'HTTP/1.1 200 OK');
-		Log::WriteEndCall(__FILE__);
+    Log::writeStartCall(__FILE__);
+    Log::write('UnInstall', 'INPUT', @file_get_contents('php://input'));
 
-		header('HTTP/1.1 200 OK', true, 200);
-		die('OK');
-	} catch(\Exception $oEx) {
-		Log::Write('UnInstall', 'ERROR', 'HTTP/1.1 500 Internal Server Error. ' . $oEx->getMessage());
-		Log::WriteEndCall(__FILE__);
+    $oAppConnector = new AppConnector();
+    $oAppConnector->unInstall();
 
-		header('HTTP/1.1 500 Internal Server Error', true, 500);
-		echo $oEx->getMessage();
-		die();
-	}
+    Log::write('Handshake', 'OUTPUT', 'HTTP/1.1 200 OK');
+    Log::writeEndCall(__FILE__);
+
+    header('HTTP/1.1 200 OK', true, 200);
+    die('OK');
+} catch (\Exception $oEx) {
+    Log::write('UnInstall', 'ERROR', 'HTTP/1.1 500 Internal Server Error. ' . $oEx->getMessage());
+    Log::writeEndCall(__FILE__);
+
+    header('HTTP/1.1 500 Internal Server Error', true, 500);
+    echo $oEx->getMessage();
+    die();
+}

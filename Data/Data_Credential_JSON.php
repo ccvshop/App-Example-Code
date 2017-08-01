@@ -1,150 +1,157 @@
 <?
-	namespace AppConnector\Data;
 
-	use AppConnector\Entities\Credential;
-	use AppConnector\Exceptions\InvalidCredentialException;
-	use AppConnector\Json\JsonSerializer;
-	use AppConnector\Log\Log;
+namespace AppConnector\Data;
 
-	/**
-	 * Class Data_Credential_JSON
-	 * Handles all data manipulations for Credentials
-	 *
-	 * @package AppConnector\Data
-	 * @author  Adriaan Meijer
-	 * @date    2014-10-13
-	 * @version 1.0    - First draft
-	 *          1.1    - Added logging
-	 * 			1.2	   - Nick Postma: Added database credential storage
-	 * 			1.3	   - Nick Postma: Implemented strategy pattern for Data_Credential (Classe renamed to Data_Credential_JSON) and now uses oCredential->ToArray()
-	 *
-	 */
-	class Data_Credential_JSON  extends Data_Core implements IData_Credential {
-		const DataFile = 'Data/data.credential.txt';
+use AppConnector\Entities\Credential;
+use AppConnector\Exceptions\InvalidCredentialException;
+use AppConnector\Json\JsonSerializer;
+use AppConnector\Log\Log;
 
-		/**
-		 * Inserts 1 row containing a Credential into the data file
-		 *
-		 * @static
-		 *
-		 * @param Credential $oCredential
-		 * @return bool
-		 * @throws \AppConnector\Exceptions\InvalidJsonException
-		 * @throws \Exception
-		 */
-		static public function Insert(Credential $oCredential) {
+/**
+ * Class Data_Credential_JSON
+ * Handles all data manipulations for Credentials
+ *
+ * @package AppConnector\Data
+ * @author  Adriaan Meijer
+ * @date    2014-10-13
+ * @version 1.0    - First draft
+ *          1.1    - Added logging
+ *            1.2       - Nick Postma: Added database credential storage
+ *            1.3       - Nick Postma: Implemented strategy pattern for Data_Credential (Classe renamed to Data_Credential_JSON) and now uses oCredential->ToArray()
+ *
+ */
+class Data_Credential_JSON extends Data_Core implements IData_Credential
+{
+    const DATA_FILE = 'Data/data.credential.txt';
 
-			#@todo: check up dubbele public keys
-			fwrite(static::OpenFileToWrite(), JsonSerializer::Serialize($oCredential->ToArray()) . "\r\n");
-			Log::Write('Data_Credential::Insert', 'INPUT', 'Row written on ' . $oCredential->GetApiPublic());
+    /**
+     * Inserts 1 row containing a Credential into the data file
+     *
+     * @static
+     *
+     * @param Credential $oCredential
+     *
+     * @return bool
+     * @throws \AppConnector\Exceptions\InvalidJsonException
+     * @throws \Exception
+     */
+    public static function insert(Credential $oCredential)
+    {
 
-			return true;
-		}
+        #@todo: check up dubbele public keys
+        fwrite(static::openFileToWrite(), JsonSerializer::serialize($oCredential->toArray()) . "\r\n");
+        Log::write('Data_Credential::Insert', 'INPUT', 'Row written on ' . $oCredential->getApiPublic());
 
-		/**
-		 * Updates 1 row containing a Credential based on the Public Key
-		 *
-		 * @static
-		 *
-		 * @param Credential $oCredential
-		 * @return bool
-		 */
-		static public function Update(Credential $oCredential)
-		{
-			$rFile = static::OpenFileToRead();
-			$aData = array();
-			while(($sLine = fgets($rFile)) !== false) {
-				$oData = JsonSerializer::DeSerialize($sLine);
-				if($oData->api_public === $oCredential->GetApiPublic()) {
-					$oData->customer_id = $oCredential->GetCustomerId();
-				}
+        return true;
+    }
 
-				$aData[] = JsonSerializer::Serialize($oData);
-			}
-			#Write empty line at file end
-			$aData[] = null;
+    /**
+     * Updates 1 row containing a Credential based on the Public Key
+     *
+     * @static
+     *
+     * @param Credential $oCredential
+     *
+     * @return bool
+     */
+    public static function update(Credential $oCredential)
+    {
+        $rFile = static::openFileToRead();
+        $aData = [];
+        while (($sLine = fgets($rFile)) !== false) {
+            $oData = JsonSerializer::deSerialize($sLine);
+            if ($oData->api_public === $oCredential->getApiPublic()) {
+                $oData->customer_id = $oCredential->getCustomerId();
+            }
 
-			file_put_contents(static::DataFile, implode("\r\n", $aData));
-			Log::Write('Data_Credential::Update', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
+            $aData[] = JsonSerializer::serialize($oData);
+        }
+        #Write empty line at file end
+        $aData[] = null;
 
-			return true;
-		}
+        file_put_contents(static::DATA_FILE, implode("\r\n", $aData));
+        Log::write('Data_Credential::Update', 'INPUT', 'Row updated on ' . $oCredential->getApiPublic());
 
-		/**
-		 * Deletes 1 row containing a WebHook based on the Public Key
-		 *
-		 * @static
-		 *
-		 * @param Credential $oCredential
-		 * @return bool
-		 * @throws \Exception
-		 */
-		static public function Delete(Credential $oCredential)
-		{
-			$rFile = static::OpenFileToRead();
-			$aData = array();
+        return true;
+    }
 
-			while(($sLine = fgets($rFile)) !== false) {
-				$oObject = new Credential(JsonSerializer::DeSerialize($sLine));
-				if($oObject->GetApiPublic() !== $oCredential->GetApiPublic()) {
-					$sLine = str_replace(array("\n", "\r"), '', $sLine);
-					$sLine = trim($sLine);
-					if(!empty($sLine)) {
-						$aData[] = $sLine;
-					}
-				}
-			}
-			#Write empty line at file end
-			$aData[] = null;
+    /**
+     * Deletes 1 row containing a WebHook based on the Public Key
+     *
+     * @static
+     *
+     * @param Credential $oCredential
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public static function delete(Credential $oCredential)
+    {
+        $rFile = static::openFileToRead();
+        $aData = [];
 
-			file_put_contents(static::DataFile, implode("\r\n", $aData));
-			Log::Write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->GetApiPublic());
+        while (($sLine = fgets($rFile)) !== false) {
+            $oObject = new Credential(JsonSerializer::deSerialize($sLine));
+            if ($oObject->getApiPublic() !== $oCredential->getApiPublic()) {
+                $sLine = str_replace(["\n", "\r"], '', $sLine);
+                $sLine = trim($sLine);
+                if (!empty($sLine)) {
+                    $aData[] = $sLine;
+                }
+            }
+        }
+        #Write empty line at file end
+        $aData[] = null;
 
-			return true;
-		}
+        file_put_contents(static::DATA_FILE, implode("\r\n", $aData));
+        Log::write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->getApiPublic());
 
-		/**
-		 * Return one Credential based on the Public Key
-		 *
-		 * @static
-		 *
-		 * @param string $sApiPublic
-		 * @return Credential
-		 * @throws InvalidCredentialException
-		 * @throws \Exception
-		 */
-		static public function GetOneByPublicKey($sApiPublic = '')
-		{
-			$rFile = static::OpenFileToRead();
-			while(($sLine = fgets($rFile)) !== false) {
-				$oObject = new Credential(JsonSerializer::DeSerialize($sLine));
-				if($oObject->GetApiPublic() === $sApiPublic) {
-					Log::Write('Data_Credential::GetOneByPublicKey', 'INPUT', 'Row found for ' . $sApiPublic);
-					return $oObject;
-				}
-			}
-			throw new InvalidCredentialException();
-		}
+        return true;
+    }
 
-		/**
-		 * Return all Credentials
-		 *
-		 * @static
-		 *
-		 * @return Credential
-		 * @throws InvalidCredentialException
-		 * @throws \Exception
-		 */
-		static public function GetAll()
-		{
-			$rFile = static::OpenFileToRead();
-			$aCredentials = [];
-			while(($sLine = fgets($rFile)) !== false) {
-				$aCredentials[] = new Credential(JsonSerializer::DeSerialize($sLine));
-			}
-			if(!empty($aCredentials)) {
-				return $aCredentials;
-			}
-			throw new InvalidCredentialException();
-		}
-	}
+    /**
+     * Return one Credential based on the Public Key
+     *
+     * @static
+     *
+     * @param string $sApiPublic
+     *
+     * @return Credential
+     * @throws InvalidCredentialException
+     * @throws \Exception
+     */
+    public static function getOneByPublicKey($sApiPublic = '')
+    {
+        $rFile = static::openFileToRead();
+        while (($sLine = fgets($rFile)) !== false) {
+            $oObject = new Credential(JsonSerializer::deSerialize($sLine));
+            if ($oObject->getApiPublic() === $sApiPublic) {
+                Log::write('Data_Credential::GetOneByPublicKey', 'INPUT', 'Row found for ' . $sApiPublic);
+                return $oObject;
+            }
+        }
+        throw new InvalidCredentialException();
+    }
+
+    /**
+     * Return all Credentials
+     *
+     * @static
+     *
+     * @return Credential[]
+     * @throws InvalidCredentialException
+     * @throws \Exception
+     */
+    public static function getAll()
+    {
+        $rFile        = static::openFileToRead();
+        $aCredentials = [];
+        while (($sLine = fgets($rFile)) !== false) {
+            $aCredentials[] = new Credential(JsonSerializer::deSerialize($sLine));
+        }
+        if (!empty($aCredentials)) {
+            return $aCredentials;
+        }
+        throw new InvalidCredentialException();
+    }
+}

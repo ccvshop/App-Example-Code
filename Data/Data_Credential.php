@@ -1,117 +1,124 @@
 <?
-	namespace AppConnector\Data;
 
-	use AppConnector\Config;
-	use AppConnector\Entities\Credential;
-	use AppConnector\Exceptions\InvalidCredentialException;
+namespace AppConnector\Data;
 
-	require_once('IData_Credential.php');
-	require_once('Data_Credential_SQL.php');
-	require_once('Data_Credential_JSON.php');
+use AppConnector\Config;
+use AppConnector\Entities\Credential;
+use AppConnector\Exceptions\InvalidCredentialException;
 
-	/**
-	 * Class Data_Credential
-	 * Concrete class for all data manipulations for Credentials
-	 *
-	 * @package AppConnector\Data
-	 * @author  Nick Postma
-	 * @date    2016-06-14
-	 * @version 1.0    - First draft
-	 *
-	 */
-	class Data_Credential {
+require_once('IData_Credential.php');
+require_once('Data_Credential_SQL.php');
+require_once('Data_Credential_JSON.php');
 
-		/**
-		 * @static
-		 *
-		 * @return IData_Credential
-		 * @throws \Exception
-		 */
-		protected static function GetHandlerClassname() {
-			$sDataCrentialClass = "AppConnector\Data\Data_Credential_" . Config::CredentialStorageType;
+/**
+ * Class Data_Credential
+ * Concrete class for all data manipulations for Credentials
+ *
+ * @package AppConnector\Data
+ * @author  Nick Postma
+ * @date    2016-06-14
+ * @version 1.0    - First draft
+ *
+ */
+class Data_Credential
+{
 
-			if(!class_exists($sDataCrentialClass)) {
-				throw new \Exception('Could not determine the credential handler (' .
-									 $sDataCrentialClass .
-									 '). Please check CredentialStorageType in the config class');
-			}
+    /**
+     * @static
+     *
+     * @return IData_Credential
+     * @throws \Exception
+     */
+    protected static function getHandlerClassname()
+    {
+        /** @var IData_Credential $sDataCrentialClass */
+        $sDataCrentialClass = "AppConnector\Data\Data_Credential_" . Config::CREDENTIAL_STORAGE_TYPE;
 
-			return $sDataCrentialClass;
-		}
+        if (!class_exists($sDataCrentialClass)) {
+            throw new \Exception('Could not determine the credential handler (' . $sDataCrentialClass . '). Please check CredentialStorageType in the config class');
+        }
 
-		/**
-		 * Inserts 1 row containing a Credential into the data file
-		 *
-		 * @static
-		 *
-		 * @param Credential $oCredential
-		 *
-		 * @return bool
-		 * @throws \AppConnector\Exceptions\InvalidJsonException
-		 * @throws \Exception
-		 */
-		static public function Insert(Credential $oCredential) {
-			$sDataCrentialClass = static::GetHandlerClassname();
-			return $sDataCrentialClass::Insert($oCredential);
-		}
+        return $sDataCrentialClass;
+    }
 
-		/**
-		 * Updates 1 row containing a Credential based on the Public Key
-		 *
-		 * @static
-		 *
-		 * @param \AppConnector\Entities\Credential $oCredential
-		 *
-		 * @return bool
-		 * @throws \Exception
-		 */
-		static public function Update(Credential $oCredential) {
-			$sDataCrentialClass = static::GetHandlerClassname();
-			return $sDataCrentialClass::Update($oCredential);
-		}
+    /**
+     * Inserts 1 row containing a Credential into the data file
+     *
+     * @static
+     *
+     * @param Credential $oCredential
+     *
+     * @return bool
+     * @throws \AppConnector\Exceptions\InvalidJsonException
+     * @throws \Exception
+     */
+    public static function insert(Credential $oCredential)
+    {
+        $sDataCrentialClass = static::getHandlerClassname();
+        return $sDataCrentialClass::insert($oCredential);
+    }
 
-		/**
-		 * Deletes 1 row containing a WebHook based on the Public Key
-		 * @static
-		 *
-		 * @param \AppConnector\Entities\Credential $oCredential
-		 *
-		 * @return bool
-		 * @throws \Exception
-		 */
-		static public function Delete(Credential $oCredential) {
-			$sDataCrentialClass = static::GetHandlerClassname();
-			return $sDataCrentialClass::Delete($oCredential);
-		}
+    /**
+     * Updates 1 row containing a Credential based on the Public Key
+     *
+     * @static
+     *
+     * @param \AppConnector\Entities\Credential $oCredential
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public static function update(Credential $oCredential)
+    {
+        $sDataCrentialClass = static::getHandlerClassname();
+        return $sDataCrentialClass::update($oCredential);
+    }
 
-		/**
-		 * Return one Credential based on the Public Key
-		 *
-		 * @static
-		 *
-		 * @param string $sApiPublic
-		 *
-		 * @return Credential
-		 * @throws InvalidCredentialException
-		 * @throws \Exception
-		 */
-		static public function GetOneByPublicKey($sApiPublic = '') {
-			$sDataCrentialClass = static::GetHandlerClassname();
-			return $sDataCrentialClass::GetOneByPublicKey($sApiPublic);
-		}
+    /**
+     * Deletes 1 row containing a WebHook based on the Public Key
+     * @static
+     *
+     * @param \AppConnector\Entities\Credential $oCredential
+     *
+     * @return bool
+     * @throws \Exception
+     */
+    public static function delete(Credential $oCredential)
+    {
+        $sDataCrentialClass = static::getHandlerClassname();
+        return $sDataCrentialClass::delete($oCredential);
+    }
 
-		/**
-		 * Return all Credentials
-		 *
-		 * @static
-		 *
-		 * @return Credential
-		 * @throws InvalidCredentialException
-		 * @throws \Exception
-		 */
-		static public function GetAll() {
-			$sDataCrentialClass = static::GetHandlerClassname();
-			return $sDataCrentialClass::GetAll();
-		}
+    /**
+     * Return one Credential based on the Public Key
+     *
+     * @static
+     *
+     * @param string $sApiPublic
+     *
+     * @return Credential
+     * @throws InvalidCredentialException
+     * @throws \Exception
+     */
+    public static function getOneByPublicKey($sApiPublic = '')
+    {
+        $sDataCrentialClass = static::getHandlerClassname();
+        return $sDataCrentialClass::getOneByPublicKey($sApiPublic);
+    }
 
-	}
+    /**
+     * Return all Credentials
+     *
+     * @static
+     *
+     * @return Credential
+     * @throws InvalidCredentialException
+     * @throws \Exception
+     */
+    public static function getAll()
+    {
+        $sDataCrentialClass = static::getHandlerClassname();
+        return $sDataCrentialClass::getAll();
+    }
+
+}
