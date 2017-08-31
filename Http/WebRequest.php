@@ -61,15 +61,14 @@ class WebRequest
         $sTimeStamp = gmdate('c');
 
         #Creating the hash
-        $sHashString = implode('|', [
-            $this->getPublicKey(),
-            $sMethod,
-            $this->getApiResource(),
-            '',
-            $sTimeStamp,
-        ]);
+		$oHash = new Hash($this->getSecretKey());
+		$oHash->addData($this->getPublicKey());
+		$oHash->addData($sMethod);
+		$oHash->addData($this->getApiResource());
+		$oHash->addData('');
+		$oHash->addData($sTimeStamp);
 
-        $sHash = hash_hmac('sha512', $sHashString, $this->getSecretKey());
+		$sHash = $oHash->hash();
 
         $rCurlHandler = curl_init();
         curl_setopt($rCurlHandler, CURLOPT_URL, $this->getApiRoot() . $this->getApiResource());
@@ -113,15 +112,14 @@ class WebRequest
         $sTimeStamp = gmdate('c');
 
         #Creating the hash
-        $sHashString = implode('|', [
-            $this->getPublicKey(),
-            $sMethod,
-            $this->getApiResource(),
-            $this->getData(),
-            $sTimeStamp,
-        ]);
+		$oHash = new Hash($this->getSecretKey());
+		$oHash->addData($this->getPublicKey());
+		$oHash->addData($sMethod);
+		$oHash->addData($this->getApiResource());
+		$oHash->addData($this->getData());
+		$oHash->addData($sTimeStamp);
 
-        $sHash = hash_hmac('sha512', $sHashString, $this->getSecretKey());
+		$sHash = $oHash->hash();
 
         $rCurlHandler = curl_init();
         curl_setopt($rCurlHandler, CURLOPT_URL, $this->getApiRoot() . $this->getApiResource());
@@ -163,15 +161,14 @@ class WebRequest
         $sTimeStamp = gmdate('c');
 
         #Creating the hash
-        $sHashString = implode('|', [
-            $this->getPublicKey(),
-            $sMethod,
-            $this->getApiResource(),
-            $this->getData(),
-            $sTimeStamp,
-        ]);
+		$oHash = new Hash($this->getSecretKey());
+		$oHash->addData($this->getPublicKey());
+		$oHash->addData($sMethod);
+		$oHash->addData($this->getApiResource());
+		$oHash->addData($this->getData());
+		$oHash->addData($sTimeStamp);
 
-        $sHash = hash_hmac('sha512', $sHashString, $this->getSecretKey());
+		$sHash = $oHash->hash();
 
         $rCurlHandler = curl_init();
         curl_setopt($rCurlHandler, CURLOPT_URL, $this->getApiRoot() . $this->getApiResource());
@@ -217,15 +214,14 @@ class WebRequest
         $sTimeStamp = gmdate('c');
 
         #Creating the hash
-        $sHashString = implode('|', [
-            $this->getPublicKey(),
-            $sMethod,
-            $this->getApiResource(),
-            $this->getData(),
-            $sTimeStamp,
-        ]);
+		$oHash = new Hash($this->getSecretKey());
+		$oHash->addData($this->getPublicKey());
+		$oHash->addData($sMethod);
+		$oHash->addData($this->getApiResource());
+		$oHash->addData($this->getData());
+		$oHash->addData($sTimeStamp);
 
-        $sHash = hash_hmac('sha512', $sHashString, $this->getSecretKey());
+		$sHash = $oHash->hash();
 
         $rCurlHandler = curl_init();
         curl_setopt($rCurlHandler, CURLOPT_URL, $this->getApiRoot() . $this->getApiResource());
@@ -271,15 +267,14 @@ class WebRequest
         $sTimeStamp = gmdate('c');
 
         #Creating the hash
-        $sHashString = implode('|', [
-            $this->getPublicKey(),
-            $sMethod,
-            $this->getApiResource(),
-            $this->getData(),
-            $sTimeStamp,
-        ]);
+		$oHash = new Hash($this->getSecretKey());
+		$oHash->addData($this->getPublicKey());
+		$oHash->addData($sMethod);
+		$oHash->addData($this->getApiResource());
+		$oHash->addData($this->getData());
+		$oHash->addData($sTimeStamp);
 
-        $sHash = hash_hmac('sha512', $sHashString, $this->getSecretKey());
+		$sHash = $oHash->hash();
 
         $rCurlHandler = curl_init();
         curl_setopt($rCurlHandler, CURLOPT_URL, $this->getApiRoot() . $this->getApiResource());
