@@ -21,6 +21,7 @@ require_once('AppConnector.php');
  * It's advised to store this in a session for instances. For demo purposes we'll leave this in the request.
  */
 $_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
+$_GET['x-hash'] = (isset($_GET['x-hash']) && is_string($_GET['x-hash'])) ? $_GET['x-hash'] : null;
 
 $oHash = new Hash();
 $bValid = $oHash->AddData(Config::APP_INSTALL_URI)->AddData($_GET['api_public'])->IsValid($_GET['x-hash']);
