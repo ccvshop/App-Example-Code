@@ -25,8 +25,9 @@ $_GET['x-hash'] = (isset($_GET['x-hash']) && is_string($_GET['x-hash'])) ? $_GET
 
 $oHash = new Hash();
 $bValid = $oHash->AddData(Config::APP_INSTALL_URI)->AddData($_GET['api_public'])->IsValid($_GET['x-hash']);
-if ($bValid === false)
+if ($bValid === false){
 	throw new InvalidHashException;
+}
 
 
 if (empty($_POST)) {

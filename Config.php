@@ -38,7 +38,7 @@ class Config
 	/**
 	 * This is the URI of the Install. Use this to validate calls from the App store.
 	 * Example: https://demo.securearea.eu/Install.php
-	 * This Uri is used in the AppConnector.php
+	 * This Uri is used in the Install.php
 	 */
 	const APP_INSTALL_URI = '';
 
