@@ -10,6 +10,8 @@
 
 namespace AppConnector;
 
+use AppConnector\Exceptions\InvalidHashException;
+use AppConnector\Http\Hash;
 use AppConnector\Log\Log;
 
 require_once('AppConnector.php');
@@ -19,6 +21,49 @@ require_once('AppConnector.php');
  * It's advised to store this in a session for instances. For demo purposes we'll leave this in the request.
  */
 $_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
+$_GET['x-hash'] = (isset($_GET['x-hash']) && is_string($_GET['x-hash'])) ? $_GET['x-hash'] : null;
+
+$oHash = new Hash();
+$bValid = $oHash->AddData(Config::APP_INSTALL_URI)->AddData($_GET['api_public'])->IsValid($_GET['x-hash']);
+if ($bValid === false){
+	?>
+	<html>
+	<head>
+		<title></title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+			  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+			  integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	</head>
+	<body>
+		<h3>Hash validation failed</h3>
+		<p>Hash validation for incoming call failed. Install cannot continue.</p>
+
+		<br />
+		<div class="panel panel-info">
+			<div class="panel-heading">
+				<h3 class="panel-title">
+					Debug Info
+				</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>
+					<span style="display: inline-block; width: 120px;">Calculated hash:</span><?= $oHash->hash(); ?><br />
+					<span style="display: inline-block; width: 120px;">Expected hash:</span><?= $_GET['x-hash'] ?>
+				</p>
+
+			</div>
+		</div>
+	</body>
+	<?
+
+	die;
+}
+
 
 if (empty($_POST)) {
     Log::writeStartCall(__FILE__);
@@ -230,7 +275,8 @@ if (empty($_POST)) {
 		<div class="panel-body">
 
 			<p>
-				api_public: <?= $_GET['api_public'] ?>
+				<span style="display: inline-block; width: 80px;">api_public:</span><?= $_GET['api_public'] ?><br />
+				<span style="display: inline-block; width: 80px;">language:</span><?= $_GET['language'] ?>
 			</p>
 
 		</div>
