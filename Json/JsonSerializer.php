@@ -31,13 +31,13 @@ class JsonSerializer
             throw new InvalidJsonException();
         }
         if (empty($sJson)) {
-            throw new InvalidJsonException();
+			throw new InvalidJsonException();
         }
 
         $oData = json_decode($sJson);
 
         if (json_last_error() !== 0) {
-            throw new InvalidJsonException();
+			throw new InvalidJsonException();
         }
         return $oData;
     }

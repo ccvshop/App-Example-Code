@@ -107,15 +107,18 @@ class Data_Transaction extends Data_Core
      */
     public static function getOneByTransactionId($sTransactionId = '')
     {
+
         $rFile = static::openFileToRead();
-        while (($sLine = fgets($rFile)) !== false) {
-            $oObject = new Transaction(JsonSerializer::deSerialize($sLine));
+		while (($sLine = fgets($rFile)) !== false) {
+
+			$oObject = new Transaction(JsonSerializer::deSerialize($sLine));
 
             if ($oObject->getTransactionId() === $sTransactionId) {
                 Log::write('Data_Credential::GetOneByPublicKey', 'INPUT', 'Row found for ' . $sTransactionId);
                 return $oObject;
             }
         }
+
         throw new \AppConnector\Exceptions\InvalidTransactionId();
     }
 }

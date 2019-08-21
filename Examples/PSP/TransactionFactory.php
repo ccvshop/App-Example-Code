@@ -48,6 +48,7 @@ class TransactionFactory
 
         $oPostedData  = \AppConnector\Json\JsonSerializer::deSerialize(@file_get_contents('php://input'));
         $oTransaction = new \AppConnector\Entities\Transaction($oPostedData);
+
         $this->doCreditCheck($oTransaction);
 
         $oTransaction->setCustomerId($this->credential->getCustomerId());

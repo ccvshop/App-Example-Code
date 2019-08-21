@@ -18,7 +18,7 @@ class Config
      * This Uri is used in the update schema example
      * Note: Remove possible trailing slashes.
      */
-	const APP_URI = '';
+	const APP_URI = 'https://ameijer-app-psp.ccvdev.nl';
 
 	/**
 	 * This contains a secret key which is unique for this App.
@@ -26,28 +26,28 @@ class Config
 	 * Example: 'dsadsakldjsakljdklsajdklsajdkljas'
 	 * This key is used in the AppConnector.php
 	 */
-	const APP_SECRET_KEY = '';
+	const APP_SECRET_KEY = '3gwkvacbetddvt3j4etexmhy1msmspbm';
 
 	/**
 	 * This is the URI of the handshake. Use this to validate calls from the App store.
 	 * Example: https://demo.securearea.eu/Handshake.php
 	 * This Uri is used in the AppConnector.php
 	 */
-	const APP_HANDSHAKE_URI = '';
+	const APP_HANDSHAKE_URI = 'https://ameijer-app-psp.ccvdev.nl/Handshake.php';
 
 	/**
 	 * This is the URI of the Install. Use this to validate calls from the App store.
 	 * Example: https://demo.securearea.eu/Install.php
 	 * This Uri is used in the Install.php
 	 */
-	const APP_INSTALL_URI = '';
+	const APP_INSTALL_URI = 'https://ameijer-app-psp.ccvdev.nl/Install.php';
 
 	/**
 	 * This is the URI of the Uninstall. Use this to validate calls from the App store.
 	 * Example: https://demo.securearea.eu/UnInstall.php
 	 * This Uri is used in the AppConnector.php
 	 */
-	const APP_UNINSTALL_URI = '';
+	const APP_UNINSTALL_URI = 'https://ameijer-app-psp.ccvdev.nl/UnInstall.php';
 
     /**
      * Default setting for storing credentials.

@@ -23,22 +23,30 @@ require_once('AppConnector.php');
 $_GET['api_public'] = (isset($_GET['api_public']) && is_string($_GET['api_public'])) ? $_GET['api_public'] : null;
 $_GET['x-hash'] = (isset($_GET['x-hash']) && is_string($_GET['x-hash'])) ? $_GET['x-hash'] : null;
 
-$oHash = new Hash();
-$bValid = $oHash->AddData(Config::APP_INSTALL_URI)->AddData($_GET['api_public'])->IsValid($_GET['x-hash']);
-if ($bValid === false){
-	?>
-	<html>
-	<head>
-		<title></title>
-		<!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-			  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-		<!-- Optional theme -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
-			  integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
-	</head>
-	<body>
+
+
+if (empty($_POST)) {
+    Log::writeStartCall(__FILE__);
+    Log::write('Install', 'VIEW', 'api_public: ' . $_GET['api_public']);
+    Log::writeEndCall(__FILE__);
+
+	$oHash = new Hash();
+	$bValid = $oHash->AddData(Config::APP_INSTALL_URI)->AddData($_GET['api_public'])->IsValid($_GET['x-hash']);
+	if ($bValid === false){
+		?>
+		<html>
+		<head>
+			<title></title>
+			<!-- Latest compiled and minified CSS -->
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+				  integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+			<!-- Optional theme -->
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+				  integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+		</head>
+		<body>
 		<h3>Hash validation failed</h3>
 		<p>Hash validation for incoming call failed. Install cannot continue.</p>
 
@@ -58,17 +66,12 @@ if ($bValid === false){
 
 			</div>
 		</div>
-	</body>
-	<?
+		</body>
+		<?
 
-	die;
-}
+		die;
+	}
 
-
-if (empty($_POST)) {
-    Log::writeStartCall(__FILE__);
-    Log::write('Install', 'VIEW', 'api_public: ' . $_GET['api_public']);
-    Log::writeEndCall(__FILE__);
     #First visit
 
     ?>
