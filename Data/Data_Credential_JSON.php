@@ -130,6 +130,7 @@ class Data_Credential_JSON extends Data_Core implements IData_Credential
                 return $oObject;
             }
         }
+        Log::write('Install', 'ERROR', 'Can not find row in JSON file');
         throw new InvalidCredentialException();
     }
 
