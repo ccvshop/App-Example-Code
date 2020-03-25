@@ -46,6 +46,8 @@ try {
         ['row 1', 'row 2', 'row 3', 'row 4'],
          ['row 1', 'row 2', 'row 3', 'row 4'],
     ];
+    $oResponse->data['info'] = "Multi line <br /> info message ";
+    $oResponse->data['error'] = 'Error message';
 
     $sResponse = json_encode($oResponse);
     Log::write('Endpoint', 'OUTPUT_BODY', $sResponse);

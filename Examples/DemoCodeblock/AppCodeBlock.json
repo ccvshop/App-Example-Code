@@ -39,6 +39,20 @@
           "label": "table",
           "element_type": "table",
           "icon": "fa-share"
+        },
+        {
+          "name": "info",
+          "label": "info",
+          "element_type": "info_message",
+          "value": "",
+          "icon": "fa-share"
+        },
+        {
+          "name": "error",
+          "label": "error",
+          "element_type": "error_message",
+          "value": "",
+          "icon": "fa-share"
         }
       ]
     }
