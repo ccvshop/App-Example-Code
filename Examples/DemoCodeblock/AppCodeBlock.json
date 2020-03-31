@@ -1,0 +1,60 @@
+{
+  "views": [
+    {
+      "name": "onload",
+      "endpoint": "https://demo.securearea.eu/Examples/DemoCodeblock/Endpoint.php",
+      "elements": [
+
+        {
+          "name": "text",
+          "label": "Text element",
+          "element_type": "text",
+          "value": "description"
+        },
+        {
+          "name": "enabled",
+          "label": "input_checkbox",
+          "element_type": "input_checkbox",
+          "value": "1"
+        },
+        {
+          "name": "input_text",
+          "label": "input_text",
+          "element_type": "input_text"
+        },
+        {
+          "name": "input_textarea",
+          "label": "input_textarea",
+          "element_type": "input_textarea"
+        },
+        {
+          "name": "submit",
+          "label": "input_button",
+          "value": "send",
+          "element_type": "input_button",
+          "icon": "fa-share"
+        },
+        {
+          "name": "table",
+          "label": "table",
+          "element_type": "table",
+          "icon": "fa-share"
+        },
+        {
+          "name": "info",
+          "label": "info",
+          "element_type": "info_message",
+          "value": "",
+          "icon": "fa-share"
+        },
+        {
+          "name": "error",
+          "label": "error",
+          "element_type": "error_message",
+          "value": "",
+          "icon": "fa-share"
+        }
+      ]
+    }
+  ]
+}

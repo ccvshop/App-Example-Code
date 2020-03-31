@@ -120,6 +120,9 @@ class AppConnector
             case 'ranking_the_product_service':
                 $this->installRankingTheProduct();
                 break;
+            case 'demo_codeblock':
+                $this->installDemoCodeblock();
+                break;
             case 'app_psp':
                 $this->installAppPSP();
                 break;
@@ -336,6 +339,43 @@ class AppConnector
 
         #Creating new codeblock for the send service.
         $sData = file_get_contents('Examples/RankingTheProduct/AppCodeBlock.json');
+
+        #Replace demo.securearea.eu for config setting if default scheme is used
+        $sData = str_replace("https://demo.securearea.eu", Config::APP_URI, $sData);
+
+        $oCodeBlock                      = new \stdClass();
+        $oCodeBlock->placeholder         = 'backend-show_product-meta_data';
+        $oCodeBlock->interactive_content = json_decode($sData);
+
+        $oWebRequest->setApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+        $oWebRequest->setData($oCodeBlock);
+        $oWebRequest->post();
+    }
+
+    protected function installDemoCodeblock() {
+        $oWebRequest = new WebRequest();
+        #Getting Remote App resource
+        $oWebRequest->setPublicKey($this->credential->getApiPublic());
+        $oWebRequest->setSecretKey($this->credential->getApiSecret());
+        $oWebRequest->setApiRoot($this->credential->getApiRoot());
+
+        $iAppId = $this->getRemoteAppId();
+
+        #Delete all current app codeblocks already installed for this app. Making it a clean install.
+        $oWebRequest->setApiResource('/api/rest/v1/apps/' . $iAppId . '/appcodeblocks');
+
+        $sOutput                 = $oWebRequest->get();
+        $aCollectionOfCodeBlocks = JsonSerializer::deSerialize($sOutput);
+
+        if (isset($aCollectionOfCodeBlocks->items)) {
+            foreach ($aCollectionOfCodeBlocks->items as $oItem) {
+                $oWebRequest->setApiResource('/api/rest/v1/appcodeblocks/' . $oItem->id);
+                $oWebRequest->delete();
+            }
+        }
+
+        #Creating new codeblock for the send service.
+        $sData = file_get_contents('Examples/DemoCodeblock/AppCodeBlock.json');
 
         #Replace demo.securearea.eu for config setting if default scheme is used
         $sData = str_replace("https://demo.securearea.eu", Config::APP_URI, $sData);
