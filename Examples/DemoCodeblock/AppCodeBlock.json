@@ -35,6 +35,16 @@
           "icon": "fa-share"
         },
         {
+          "name": "deeplink_show",
+          "label": "deeplink_show",
+          "element_type": "deeplink"
+        },
+        {
+          "name": "deeplink_hidden",
+          "label": "deeplink_hidden",
+          "element_type": "deeplink"
+        },
+        {
           "name": "table",
           "label": "table",
           "element_type": "table",

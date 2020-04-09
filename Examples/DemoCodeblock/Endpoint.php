@@ -39,6 +39,8 @@ try {
     $oResponse->data['enabled'] = '';
     $oResponse->data['input_text'] = '';
     $oResponse->data['input_textarea'] = '';
+    $oResponse->data['deeplink_show'] = 'http://disney.com';
+    $oResponse->data['deeplink_hidden'] = '';
     $oResponse->data['submit'] = '';
     $oResponse->data['table'] = [
         ['header 1', 'header 2', 'header 3', 'header 4'],
