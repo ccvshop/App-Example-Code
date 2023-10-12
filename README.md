@@ -18,4 +18,4 @@ installation and configuration.
 
 The complete manual is available as download.
 
-https://demo.securearea.eu/onderhoud/AdminItems/Developer_AppStore/developer_app_center_docs_20200211.pdf
+https://demo.securearea.eu/onderhoud/AdminItems/Developer_AppStore/developer_app_center_docs_20220927.pdf
