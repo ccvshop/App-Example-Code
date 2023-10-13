@@ -74,7 +74,7 @@ class Data_Credential_SQL extends Data_Core implements IData_Credential
         $oSqlConnection = Connection::make();
         $oSqlConnection->delete('app_credential', 'api_public', $oCredential->getApiPublic());
         Log::write('Data_Credential::Delete', 'INPUT', 'Row updated on ' . $oCredential->getApiPublic());
-
+ 
         return true;
     }
 
