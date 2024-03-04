@@ -30,6 +30,7 @@ if (!empty($_POST)) {
     header('location: ' . $oTransaction->getReturnUrl());
     die();
 }
+
 ?>
 <html>
 <head>
@@ -57,10 +58,10 @@ if (!empty($_POST)) {
 		</div>
 		<div class="panel-body">
 			<p>
-				Order <?= $oTransaction->getOrderNumber(); ?> of <?= $oTransaction->getCurrency(); ?> <?= $oTransaction->getAmount(); ?>
-				to be paid with <?= $oTransaction->getMethod(); ?>.
+				Order <?php echo $oTransaction->getOrderNumber(); ?> of <?php echo $oTransaction->getCurrency(); ?> <?php echo $oTransaction->getAmount(); ?>
+				to be paid with <?php echo $oTransaction->getMethod(); ?>.
 			</p>
-			<form action="PaymentSimulator.php?transaction_id=<?= $oTransaction->getTransactionId(); ?>" method="post">
+			<form action="PaymentSimulator.php?transaction_id=<?php echo $oTransaction->getTransactionId(); ?>" method="post">
 				<button name="status" value="SUCCESS" class="btn btn-success">Success</button>
 				<button name="status" value="CANCELLED" class="btn btn-danger">Cancel</button>
 				<button name="status" value="FAILED" class="btn btn-danger">Failed</button>
@@ -76,17 +77,17 @@ if (!empty($_POST)) {
 			</h3>
 		</div>
 		<div class="panel-body">
-			<p>method: <?= $oTransaction->getMethod(); ?> </p>
-			<p>issuer: <?= $oTransaction->getIssuer(); ?> </p>
-			<p>return_url: <?= $oTransaction->getReturnUrl(); ?> </p>
-			<p>order_id: <?= $oTransaction->getOrderId(); ?></p>
-			<p>order_number: <?= $oTransaction->getOrderNumber(); ?></p>
-			<p>amount: <?= $oTransaction->getAmount(); ?></p>
-			<p>currency: <?= $oTransaction->getCurrency(); ?></p>
-			<p>transaction_id: <?= $oTransaction->getTransactionId(); ?></p>
-			<p>create_date: <?= $oTransaction->getCreated(); ?></p>
-			<p>language: <?= $oTransaction->getLanguage(); ?></p>
-			<p>status: <?= $oTransaction->getStatus(); ?></p>
+			<p>method: <?php echo $oTransaction->getMethod(); ?> </p>
+			<p>issuer: <?php echo $oTransaction->getIssuer(); ?> </p>
+			<p>return_url: <?php echo $oTransaction->getReturnUrl(); ?> </p>
+			<p>order_id: <?php echo $oTransaction->getOrderId(); ?></p>
+			<p>order_number: <?php echo $oTransaction->getOrderNumber(); ?></p>
+			<p>amount: <?php echo $oTransaction->getAmount(); ?></p>
+			<p>currency: <?php echo $oTransaction->getCurrency(); ?></p>
+			<p>transaction_id: <?php echo $oTransaction->getTransactionId(); ?></p>
+			<p>create_date: <?php echo $oTransaction->getCreated(); ?></p>
+			<p>language: <?php echo $oTransaction->getLanguage(); ?></p>
+			<p>status: <?php echo $oTransaction->getStatus(); ?></p>
 		</div>
 	</div>
 </div>

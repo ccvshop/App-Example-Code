@@ -118,7 +118,6 @@ class Data_Transaction extends Data_Core
                 return $oObject;
             }
         }
-
         throw new \AppConnector\Exceptions\InvalidTransactionId();
     }
 }
